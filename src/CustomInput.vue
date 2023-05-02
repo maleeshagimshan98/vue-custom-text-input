@@ -6,32 +6,22 @@
 <template>
   <div class="">
     <!-- label-->
-    <p class="input-label" v-bind:class="styles.label" v-if="state.label">
-      {{state.label}}    
+    <p class="input-label" v-bind:class="styles.label" v-if="label">
+      {{ label }}
     </p>
-    <input
-      :type="state.inputType"
-      :placeholder="state.placeholder"
-      class="custom-input-el"
-      v-bind:class="
-      !state.isError ? state.isSuccess ? styles.input.success : styles.input.primary : styles.input.error"
-      v-on:input="event => onInput(event)"
-      v-on:focus="event => $emit('focus',event)"
-    />
-    <p
-      class="input-message"
-      v-bind:class="styles.error"
-      v-if="state.isError"
-    >
+    <input :type="inputType" :placeholder="placeholder" :disabled="disabled" class="custom-input-el"
+      v-bind:class="!_state.isError ? _state.isSuccess ? styles.input.success : styles.input.primary : styles.input.error"
+      v-on:input="event => onInput(event)" v-on:focus="event => $emit('focus', event)" />
+    <p class="input-message" v-bind:class="_state.isError ? styles.errorMessage : _state.isSuccess ? styles.successMessage : ''" v-if="_state.message">
       <!-- Show  Error Messages Here -->
-      {{ state.message }}
+      {{ _state.message }}
     </p>
   </div>
 </template>
 
 <script>
-import  CustomInputState from "./CustomInputState.js";
-import CustomInputStyles from "./CustomInputStyles.js";
+import CustomInputState from "./CustomInputState.js"
+import CustomInputStyles from "./CustomInputStyles.js"
 
 /**
  * =========================================================
@@ -43,18 +33,60 @@ import CustomInputStyles from "./CustomInputStyles.js";
  */
 
 
-export default  {
+export default {
   data: function () {
     return {
       //isTyping : false,
-    };
+      _state: '',
+    }
   },
   props: {
-    state: {
-      type: Object,
-      default: () => {
-        return new CustomInputState();
-      },
+    name: {
+      type: String,
+      required: true
+    },
+    controller: {
+      type: Object
+    },
+    inputType: {
+      type: String
+    },
+    realTimeValidate: {
+      type: Boolean,
+      default: true
+    },
+    validate: {
+
+    },
+    label: {
+      type: String
+    },
+    placeholder: {
+      type: String
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    isValid: {
+      type: Boolean,
+      default: true //... valid by default 
+    },
+    isSuccess: {
+      type: Boolean,
+      default: false
+    },
+    isError: {
+      type: Boolean,
+      default: false
+    },
+    isOpt: {
+      type: Boolean,
+      default: false
+    },
+    isReq: {
+      type: Boolean,
+      default: false
     },
     resetOnInput: {
       type: Boolean,
@@ -67,35 +99,63 @@ export default  {
           {
             input: {
               primary: ['border-secondary'],
-              focused : ['border-primary'],
+              focused: ['border-primary'],
               error: ['border-danger'],
               success: ['border-success']
             },
             label: [],
-            error: ['text-danger']
+            errorMessage: ['text-danger'],
+            successMessage : ['text-success']
           }
         );
       }
     },
-  }, 
-  computed: {},
+  },
+  computed: {
+  },
   components: {
   },
-  methods: {    
+  methods: {
     onInput: function (event) {
       //this.isTyping = true;
       if (this.resetOnInput) {
-        this.state.reset();
-      }      
-      this.$emit("input", event.target.value);
+        this.controller.resetState(this.name)
+      }
+      if (this.realTimeValidate) {
+        //... validate the input
+      }
+      this.controller.setData(this.name, event.target.value)
+      this.$emit("input", event.target.value)
     },
   },
-  mounted: async function () {},
-};
+  mounted: async function () {
+    //... set the controller
+    //... controller instance passed via the props has the precedence over the injected controller
+
+    if (!this.controller) {
+      throw new Error(`Controller is not injected in component -  ${this.name}`)
+    }
+    this.controller.setState(
+      this.name,
+      new CustomInputState({
+        inputType: this.inputType,
+        realTimeValidate: this.realTimeValidate,
+        validate: this.validate,
+        disabled: this.disabled,
+        isValid: this.isValid,
+        isSuccess: this.isSuccess,
+        isError: this.isError,
+        isOpt: this.isOpt,
+        isReq: this.isReq,
+      })
+    )
+    this._state = this.controller.getState(this.name)
+
+  },
+}
 </script>
 
 <style scoped>
-
 .input-label {
   padding: 0;
   margin: 0;
@@ -105,8 +165,9 @@ export default  {
 .custom-input-el {
   margin: 0;
   padding: 1vh 0;
-  background : '';
-  color : black /** change */
+  background: '';
+  color: black
+    /** change */
 }
 
 .input-message {
@@ -114,11 +175,12 @@ export default  {
 }
 
 .input-message.success {
-  color: green; /** change */
+  color: green;
+  /** change */
 }
 
 .input-message.error {
-  color: red; /** change */
+  color: red;
+  /** change */
 }
-
 </style>>

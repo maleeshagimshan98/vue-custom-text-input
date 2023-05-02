@@ -1,15 +1,17 @@
 <template>
     <div class="app">
-        <comp></comp>
+        <comp name="testInput" :controller="inputController"></comp>
     </div>
 </template>
 
 <script>
 import comp from "../src/CustomInput.vue"
+import controller from "./CustomInputGroupController.js"
 
 export default {
     data() {
         return {
+            inputController: new controller()
         }
     },
     methods: {},

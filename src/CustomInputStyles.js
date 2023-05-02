@@ -10,7 +10,7 @@ class CustomInputStyles {
      * @param {*} label 
      * @param {*} error 
      */
-    constructor ({input,label,error})
+    constructor ({input,label,errorMessage, successMessage})
     {
         this.input = {
             primary : [],
@@ -19,9 +19,10 @@ class CustomInputStyles {
             success : []
         }
         this.label = []
-        this.error = []
+        this.errorMessage = []
+        this.successMessage = []
 
-        this._init({input,label,error})
+        this._init({input,label,errorMessage, successMessage})
     }
 
     /**
@@ -52,7 +53,7 @@ class CustomInputStyles {
      * @param {string} label 
      * @param {string} error 
      */
-    _init ({input,label,error})
+    _init ({input,label,errorMessage,successMessage})
     {
         if (Object.keys(input).length > 0) {
             for (let prop in input) {
@@ -64,7 +65,8 @@ class CustomInputStyles {
         }
         
         this.label = this._checkParamTypesAndPrepare(label)
-        this.error = this._checkParamTypesAndPrepare(error)        
+        this.errorMessage = this._checkParamTypesAndPrepare(errorMessage)  
+        this.successMessage = this._checkParamTypesAndPrepare(successMessage)      
     }
 }
 

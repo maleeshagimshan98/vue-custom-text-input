@@ -12,22 +12,22 @@ class CustomInputState {
      * 
      * @returns self
      */
-    constructor({inputType,validate,label,placeholder,isError,isSuccess, isOpt, isReq}={}) {
+    constructor({inputType,realTimeValidate,validateRule,disabled,isError,isSuccess, isOpt, isReq}={}) {
 
         //...
-        //validate : 'email | length > 8, etc.' - refer to ''
+        //validateRule : 'email | length > 8, etc.' - refer to ''
         //isError : 'Error_Message_Here', - initialise with an error message
         //isSuccess : 'Success_Message_Here' - initialise with an error message 
 
         this.inputType = inputType??"text"
-        this.validate = validate??null
-        this.label = label??''
-        this.placeholder = placeholder??''
+        this.realTimeValidate = realTimeValidate??true
+        this.validateRule = validateRule??null
+        this.disabled = disabled??false
         this.isValid = true        
         this.isSuccess = false
         this.isError = false
-        this.isOpt = false
-        this.isReq = true
+        this.isOpt = isOpt??false
+        this.isReq = isReq??false
         this.message = ""
 
         isError ? this.error(isError) : isSuccess ? this.success(isError) : false
