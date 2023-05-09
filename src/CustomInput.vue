@@ -57,8 +57,8 @@ export default {
       type: Boolean,
       default: true
     },
-    validate: {
-
+    validateRule: {
+      type : Array
     },
     label: {
       type: String

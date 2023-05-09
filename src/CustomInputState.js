@@ -16,7 +16,7 @@ class CustomInputState {
     {
 
         //...
-        //validateRule : 'email | length > 8, etc.' - refer to ''
+        //validateRule : ['email | length > 8', 'ERROR_MESSSAGE', 'SUCCESS_MESSAGE'], etc. - refer to ''
         //isError : 'Error_Message_Here', - initialise with an error message
         //isSuccess : 'Success_Message_Here' - initialise with an error message 
 
@@ -29,9 +29,21 @@ class CustomInputState {
         this._isError = false
         this._isOpt = isOpt??false
         this._isReq = isReq??false
+        this._validator
         this.message = ""
 
         isError ? this.error(isError) : isSuccess ? this.success(isSuccess) : false
+    }
+
+    /**
+     * set a instance of a validator class
+     * 
+     * @param {*} validator
+     * @returns {void}
+     */
+    setValidator (validator)
+    {
+        this._validator = validator
     }
 
     /**
@@ -132,6 +144,10 @@ class CustomInputState {
      */
     validate (data)
     {
+        if (!this._validator) {
+            throw new Error(`A validator is not defined`)
+        }
+
         if (!this._validateRule || this._disabled) {
             return
         }
