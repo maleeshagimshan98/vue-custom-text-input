@@ -12,25 +12,76 @@ class CustomInputState {
      * 
      * @returns self
      */
-    constructor({inputType,realTimeValidate,validateRule,disabled,isError,isSuccess, isOpt, isReq}={}) {
+    constructor({inputType,realTimeValidate,disabled,validateRule,isError,isSuccess, isOpt, isReq}={})
+    {
 
         //...
         //validateRule : 'email | length > 8, etc.' - refer to ''
         //isError : 'Error_Message_Here', - initialise with an error message
         //isSuccess : 'Success_Message_Here' - initialise with an error message 
 
-        this.inputType = inputType??"text"
-        this.realTimeValidate = realTimeValidate??true
-        this.validateRule = validateRule??null
-        this.disabled = disabled??false
-        this.isValid = true        
-        this.isSuccess = false
-        this.isError = false
-        this.isOpt = isOpt??false
-        this.isReq = isReq??false
+        this._inputType = inputType??"text"
+        this._realTimeValidate = realTimeValidate??true
+        this._validateRule = validateRule??null
+        this._disabled = disabled??false
+        this._isValid = true        
+        this._isSuccess = false
+        this._isError = false
+        this._isOpt = isOpt??false
+        this._isReq = isReq??false
         this.message = ""
 
-        isError ? this.error(isError) : isSuccess ? this.success(isError) : false
+        isError ? this.error(isError) : isSuccess ? this.success(isSuccess) : false
+    }
+
+    /**
+     * returns this.isError
+     * 
+     * @returns {Boolean}
+     */
+    isError()
+    {
+        return this._isError
+    }
+
+    /**
+     * returns this.isSuccess
+     * 
+     * @returns {Boolean}
+     */
+    isSuccess ()
+    {
+        return this._isSuccess
+    }
+
+    /**
+     * returns true if the input is disabled
+     * 
+     * @returns {Boolean}
+     */
+    isDisabled ()
+    {
+        return this._disabled
+    }
+
+    /**
+     * returns true if this input is optional
+     * 
+     * @returns {Boolean}
+     */
+    isOpt ()
+    {
+        return this._isOpt
+    }
+
+    /**
+     * returns true if this input is required
+     * 
+     * @returns {Boolean}
+     */
+    isReq ()
+    {
+        return this._isReq
     }
     
     /**
@@ -39,8 +90,10 @@ class CustomInputState {
      * @param {string} message error message
      * @returns void
      */
-    error(message) {
-        this.isError = true
+    error(message)
+    {
+        this._isError = true
+        this._isValid = false
         this.message = message
     }
 
@@ -52,8 +105,9 @@ class CustomInputState {
      */
     success (message = '')
     {
-        this.isError = false
-        this.isSuccess = true
+        this._isError = false
+        this._isValid = true
+        this._isSuccess = true
         this.message = message
     }
 
@@ -62,9 +116,28 @@ class CustomInputState {
      * 
      * @returns void
      */
-    reset() {
-        this.isError = false
+    reset()
+    {
+        this._isError = false
+        this._isSuccess = false
+        this._isValid = false
         this.message = ""
+    }
+
+    /**
+     * validate the input with the given validation rules
+     * 
+     * @param {String} data
+     * @returns {Boolean}
+     */
+    validate (data)
+    {
+        if (!this._validateRule || this._disabled) {
+            return
+        }
+
+        //... call this.error(), this.success() based on validation status
+
     }
 }
 

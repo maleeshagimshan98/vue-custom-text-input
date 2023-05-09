@@ -12,7 +12,9 @@
     <input :type="inputType" :placeholder="placeholder" :disabled="disabled" class="custom-input-el"
       v-bind:class="!_state.isError ? _state.isSuccess ? styles.input.success : styles.input.primary : styles.input.error"
       v-on:input="event => onInput(event)" v-on:focus="event => $emit('focus', event)" />
-    <p class="input-message" v-bind:class="_state.isError ? styles.errorMessage : _state.isSuccess ? styles.successMessage : ''" v-if="_state.message">
+    <p class="input-message"
+      v-bind:class="_state.isError ? styles.errorMessage : _state.isSuccess ? styles.successMessage : ''"
+      v-if="_state.message">
       <!-- Show  Error Messages Here -->
       {{ _state.message }}
     </p>
@@ -105,7 +107,7 @@ export default {
             },
             label: [],
             errorMessage: ['text-danger'],
-            successMessage : ['text-success']
+            successMessage: ['text-success']
           }
         );
       }
@@ -119,10 +121,11 @@ export default {
     onInput: function (event) {
       //this.isTyping = true;
       if (this.resetOnInput) {
-        this.controller.resetState(this.name)
+        this._state.reset()
       }
       if (this.realTimeValidate) {
         //... validate the input
+        this._state.validate(event.target.value)
       }
       this.controller.setData(this.name, event.target.value)
       this.$emit("input", event.target.value)

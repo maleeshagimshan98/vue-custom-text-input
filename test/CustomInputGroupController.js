@@ -75,7 +75,8 @@ class CustomInputGroupController {
   }
 
   /**
-   *
+   * reset the input's state
+   * 
    * @param {String} name
    * @returns {void}
    */
