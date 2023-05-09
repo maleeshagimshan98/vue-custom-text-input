@@ -132,6 +132,11 @@ export default {
     },
   },
   mounted: async function () {
+
+    if (this.disabled && this.isReq) {
+      throw new Error(`Cannot set the properties disabled and isReq to true at same time`)
+    }
+
     //... set the controller
     //... controller instance passed via the props has the precedence over the injected controller
 
