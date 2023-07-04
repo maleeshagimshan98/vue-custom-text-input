@@ -1,5 +1,5 @@
-const CustomInput = require("./custom_input.vue").default
-const CustomInputState = require("./custom_input_state.js")
-const CustomInputStyles = require("./custom_input_styles.js")
+import CustomInput from("./custom_input.vue")
+import CustomInputState from("./custom_input_state.js")
+import CustomInputStyles from("./custom_input_styles.js")
 
-module.exports = {CustomInput,CustomInputState,CustomInputStyles}
+export default {CustomInput,CustomInputState,CustomInputStyles}
