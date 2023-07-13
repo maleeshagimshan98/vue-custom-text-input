@@ -70,10 +70,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    isValid: {
-      type: Boolean,
-      default: true //... valid by default 
-    },
     isSuccess: {
       type: Boolean,
       default: false
@@ -150,7 +146,7 @@ export default {
         realTimeValidate: this.realTimeValidate,
         validate: this.validate,
         disabled: this.disabled,
-        isValid: this.isValid,
+        isValid: true,
         isSuccess: this.isSuccess,
         isError: this.isError,
         isOpt: this.isOpt,
