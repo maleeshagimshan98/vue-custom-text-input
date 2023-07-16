@@ -127,13 +127,9 @@ The Custom Input Group Controller is a class that provides the ability to track 
 
 2. Defining Input States: Use the setState method to define input states within the controller. Each state should have a unique name and a CustomInputState instance for handling validation rules, errors, and input tracking.
 
-3. Setting Input Values: Use the setData method to set values for corresponding input elements within the group. Associate each value with the respective input state's name.
+3. Validating the Group: Call the validateGroup method to validate the entire input group. The controller checks each input state based on defined rules and returns true if the group is valid, false otherwise.
 
-4. Validating the Group: Call the validateGroup method to validate the entire input group. The controller checks each input state based on defined rules and returns true if the group is valid, false otherwise.
-
-5. Handling Input States: Retrieve individual input states using the getState method, providing the name of the input state. Access properties like input value, error message, and validation status.
-
-6. Error Handling: The controller automatically updates error messages for any input that fails validation. Retrieve error messages and handle errors by accessing the input states.
+4. Handling Input States: Retrieve individual input states using the getState method, providing the name of the input state. Access properties like input value, error message, and validation status.
 
 ### Constructor
 
