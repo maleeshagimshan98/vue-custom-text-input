@@ -6,7 +6,7 @@
 
 <script>
 import comp from "../src/CustomInput.vue"
-import controller from "./CustomInputGroupController.js"
+import controller from "../src/CustomInputGroupController.js"
 
 export default {
     data() {

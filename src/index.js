@@ -1,5 +1,6 @@
-import CustomInput from("./custom_input.vue")
-import CustomInputState from("./custom_input_state.js")
-import CustomInputStyles from("./custom_input_styles.js")
+import CustomInput from("./CustomInput.vue")
+import CustomInputState from("./CustomInputState")
+import CustomInputGroupController from ("./CustomInputGroupController")
+import CustomInputStyles from("./CustomInputStyles")
 
-export default {CustomInput,CustomInputState,CustomInputStyles}
+export default {CustomInput,CustomInputState, CustomInputGroupController, CustomInputStyles}
