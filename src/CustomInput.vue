@@ -6,17 +6,18 @@
 <template>
   <div class="">
     <!-- label-->
-    <p class="input-label" v-bind:class="styles.label" v-if="label">
-      {{ label }}
+    <p class="input-label" v-bind:class="styles.label" v-if="_state.label">
+      {{ _state.label }}
     </p>
-    <input :type="inputType" :placeholder="placeholder" :disabled="disabled" class="custom-input-el"
-      v-bind:class="!_state.isError ? _state.isSuccess ? styles.input.success : styles.input.primary : styles.input.error"
+    <input :type="_state.inputType" :placeholder="_state.placeholder" :disabled="_state.isDisabled()"
+      class="custom-input-el"
+      v-bind:class="!_state.isError() ? _state.isSuccess() ? styles.input.success : styles.input.primary : styles.input.error"
       v-on:input="event => onInput(event)" v-on:focus="event => $emit('focus', event)" />
     <p class="input-message"
       v-bind:class="_state.isError ? styles.errorMessage : _state.isSuccess ? styles.successMessage : ''"
-      v-if="_state.message">
+      v-if="_state.message()">
       <!-- Show  Error Messages Here -->
-      {{ _state.message }}
+      {{ _state.message() }}
     </p>
   </div>
 </template>
@@ -58,7 +59,7 @@ export default {
       default: true
     },
     validateRule: {
-      type : Array
+      type: Array
     },
     label: {
       type: String
@@ -127,7 +128,7 @@ export default {
       this.$emit("input", event.target.value)
     },
   },
-  mounted: async function () {
+  beforeMount: async function () {
 
     if (this.disabled && this.isReq) {
       throw new Error(`Cannot set the properties disabled and isReq to true at same time`)
@@ -143,6 +144,8 @@ export default {
       this.name,
       new CustomInputState({
         inputType: this.inputType,
+        label: this.label,
+        placeholder: this.placeholder,
         realTimeValidate: this.realTimeValidate,
         validate: this.validate,
         disabled: this.disabled,
