@@ -1,5 +1,21 @@
 # Custom Text Input
 
+### Table of Contents
+- [Custom Text Input](#custom-text-input)
+  - [Key Features](#key-features)
+  - [Installation](#installation)
+  - [Example](#example)
+  - [Props](#props)
+  - [Events](#events)
+  - [CustomInputGroupController](#custominputgroupcontroller)
+    - [Features](#features)
+    - [Usage](#usage)
+    - [Constructor](#constructor)
+    - [Methods](#methods)
+- [License](#license)
+- [Author](#author)
+- [Contribution](#contribution)
+
 This is a versatile and powerful Vue component that provides a customizable text input field with built-in input validation and seamless management of visual states. With this component, you can easily create robust and visually appealing input forms while simplifying the process of handling input validation and error/success states.
 
 ### Key Features
@@ -95,7 +111,29 @@ export default {
 
 ## CustomInputGroupController
 
-The `CustomInputGroupController` is a helper class that manages the states and validation of the input group. It provides various methods to interact with the input group. Below is an overview of its constructor and methods.
+The Custom Input Group Controller is a class that provides the ability to track the state of multiple input elements and validate them as a group. It is designed to simplify the management of input states and provide a convenient way to validate inputs collectively.
+
+## Features
+
+- Input State Tracking: Track the state of each input element in a group using CustomInputState objects. These objects encapsulate properties like value, error message, and validation rules.
+
+- Group Validation: Validate the entire input group collectively. The controller performs validation checks based on defined rules for each input state and provides an easy way to determine group validity.
+
+- Customizable Validator: Customize validation rules and error messages using a custom validator. Pass the validator during initialization to define specific validation rules for the input group.
+
+## Usage
+
+1. Initializing the Controller: Create an instance of CustomInputGroupController, optionally providing a validator.
+
+2. Defining Input States: Use the setState method to define input states within the controller. Each state should have a unique name and a CustomInputState instance for handling validation rules, errors, and input tracking.
+
+3. Setting Input Values: Use the setData method to set values for corresponding input elements within the group. Associate each value with the respective input state's name.
+
+4. Validating the Group: Call the validateGroup method to validate the entire input group. The controller checks each input state based on defined rules and returns true if the group is valid, false otherwise.
+
+5. Handling Input States: Retrieve individual input states using the getState method, providing the name of the input state. Access properties like input value, error message, and validation status.
+
+6. Error Handling: The controller automatically updates error messages for any input that fails validation. Retrieve error messages and handle errors by accessing the input states.
 
 ### Constructor
 
