@@ -60,8 +60,8 @@ export default {
       type: Boolean,
       default: true
     },
-    validateRule: {
-      type: Array
+    validateCallback: {
+      type: Function
     },
     label: {
       type: String
@@ -137,29 +137,27 @@ export default {
     }
 
     //... set the controller
-    //... controller instance passed via the props has the precedence over the injected controller
-
     if (!this.controller) {
       throw new Error(`Controller is not injected in component -  ${this.name}`)
     }
     this.controller.setState(
       this.name,
       new CustomInputState({
+        name : this.name,
         inputType: this.inputType,
         label: this.label,
         placeholder: this.placeholder,
         realTimeValidate: this.realTimeValidate,
-        validate: this.validate,
         disabled: this.disabled,
         isValid: true,
         isSuccess: this.isSuccess,
         isError: this.isError,
         isOpt: this.isOpt,
         isReq: this.isReq,
-      })
+      }),
     )
     this._state = this.controller.getState(this.name)
-
+    this._state.setValidateCallback(this.validateCallback)
   },
 }
 </script>

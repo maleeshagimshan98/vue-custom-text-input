@@ -7,9 +7,10 @@
  */
 
 import CustomInputState from "./CustomInputState"
+import  DefaulValidator from "validator"
 
 class CustomInputGroupController {
-  constructor(validator = null) {
+  constructor() {
     this._states = {}
     this._data = {}
     /**
@@ -17,7 +18,7 @@ class CustomInputGroupController {
      * ATTENTION
      * INITIALIZE A VALIDATOR - ATLEAST A DEFAULT VALIDATOR
      */
-    this._validator = validator
+    this._validator = DefaulValidator
   }
 
   /**
@@ -52,8 +53,17 @@ class CustomInputGroupController {
    * @param {String} name
    * @param {CustomInputState} state
    * @returns {void}
+   * @throws {Error}
    */
   setState(name, state) {
+    if (!name) {
+      throw new Error(
+        `A custom-text-input must have a name. Please provide a name via the component props`
+      )
+    }
+    if (this._states[name]) {
+      throw new Error(`An input component with name ${name} is already exists.`)
+    }
     state.setValidator(this._validator)
     this._states[name] = state
   }
@@ -74,16 +84,14 @@ class CustomInputGroupController {
    * get the values of the inputs
    * returns either a value of single input if provided the input's name
    * or the whole input group as key - value pairs
-   * 
-   * @param {String} name 
+   *
+   * @param {String} name
    * @returns {*}
    */
-  getData (name='')
-  {
+  getData(name = "") {
     if (name) {
       return this._data[name]
-    }
-    else {
+    } else {
       return this._data
     }
   }
@@ -114,7 +122,7 @@ class CustomInputGroupController {
 
   /**
    * reset the input's state
-   * 
+   *
    * @param {String} name
    * @returns {void}
    */
@@ -142,23 +150,26 @@ class CustomInputGroupController {
     let _hasErrors = false
 
     for (let input in this._states) {
-        if(this._states[input].isDisabled()) {
-            continue
-        }
-        if (this._states[input].isReq() && this._data[input] == '') {
-            this._states[input].error(`this field is required`) //... this field is required
-            valid = false
-            _hasErrors = true
-            continue
-        }
-        if (this._states[input].isError) {
-            valid = false
-            _hasErrors = true
-            continue
-        }
-        if (this._states[input].validate(this._data[input])) {
-            valid = true
-        }
+      if (this._states[input].realTimeValidate()) {
+        continue
+      }
+      if (this._states[input].isDisabled()) {
+        continue
+      }
+      if (this._states[input].isReq() && this._data[input] == "") {
+        this._states[input].error(`this field is required`) //... this field is required
+        valid = false
+        _hasErrors = true
+        continue
+      }
+      if (this._states[input].isError) {
+        valid = false
+        _hasErrors = true
+        continue
+      }
+      if (this._states[input].validate(this._data[input])) {
+        valid = true
+      }
     }
     return valid && _hasErrors
   }

@@ -12,12 +12,12 @@ class CustomInputState {
    * @returns self
    */
   constructor({
+    name,
     inputType,
     label,
     placeholder,
     realTimeValidate,
     disabled,
-    validateRule,
     initErrorMsg,
     initSuccessMsg,
     isOpt,
@@ -28,11 +28,12 @@ class CustomInputState {
     //isError : 'Error_Message_Here', - initialise with an error message
     //isSuccess : 'Success_Message_Here' - initialise with an error message
 
+    this._name = name
     this._inputType = inputType ?? "text"
     this._label = label ?? ""
     this._placeholder = placeholder ?? ""
     this._realTimeValidate = realTimeValidate ?? true
-    this._validateRule = validateRule ?? null
+    this._validateCallback
     this._disabled = disabled ?? false
     this._isValid = true
     this._isSuccess = false
@@ -87,6 +88,29 @@ class CustomInputState {
   }
 
   /**
+   * check if the input is validated in real-time
+   *
+   * @returns {Boolean}
+   */
+  realTimeValidate() {
+    return this._realTimeValidate
+  }
+
+  /**
+   * set the validation callback function
+   * 
+   * @param {Function} callback 
+   * @returns {void}
+   * @throws {Error}
+   */
+  setValidateCallback(callback) {
+    if (callback && typeof callback !== "function") {
+      throw new Error(`Validation callback passed to '${this._name}' is not a function`)
+    }
+    this._validateCallback = callback
+  }
+
+  /**
    * Getter for the `inputType` property.
    *
    * @returns {string} The current value of the `inputType` property.
@@ -115,7 +139,7 @@ class CustomInputState {
   }
 
   /**
-   * returns this.isError
+   * returns this._isError
    *
    * @returns {Boolean}
    */
@@ -124,7 +148,7 @@ class CustomInputState {
   }
 
   /**
-   * returns this.isSuccess
+   * returns this._isSuccess
    *
    * @returns {Boolean}
    */
@@ -169,7 +193,7 @@ class CustomInputState {
     this._isError = true
     this._isSuccess = false
     this._isValid = false
-    this.message = message
+    this._message = message
   }
 
   /**
@@ -182,7 +206,7 @@ class CustomInputState {
     this._isError = false
     this._isValid = true
     this._isSuccess = true
-    this.message = message
+    this._message = message
   }
 
   /**
@@ -194,7 +218,7 @@ class CustomInputState {
     this._isError = false
     this._isSuccess = false
     this._isValid = false
-    this.message = ""
+    this._message = ""
   }
 
   /**
@@ -202,18 +226,37 @@ class CustomInputState {
    *
    * @param {String} data
    * @returns {Boolean}
+   * @throws {Error}
    */
   validate(data) {
+    if (!this._validateCallback) {
+      console.warn(
+        `custom-text-input '${this._name}' does not have a passed callback to validate the input`
+      )
+      return true
+    }
+
     if (!this._validator) {
       throw new Error(`A validator is not defined`)
     }
 
-    if (!this._validateRule || this._disabled) {
-        console.warn(`No validateRule is set`)
-        return true
+    if (this._disabled) {
+      return true
     }
 
-    //... call this.error(), this.success() based on validation status
+    let isValid = this._validateCallback({
+      validator: this._validator,
+      data,
+      error: (message) => this.error(message),
+      success: (message) => this.success(message),
+    })
+    if (typeof isValid !== "boolean") {
+      throw new Error(
+        `the callback function passed custom-text-input '${this._name}' must return a boolean value but returned ${isValid}`
+      )
+    }
+    this._isValid = isValid
+    return this._isValid
   }
 
   /**
