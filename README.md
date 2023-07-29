@@ -7,6 +7,7 @@
   - [Example](#example)
   - [Props](#props)
   - [Events](#events)
+  - [Data Validation](#data-validation)
   - [CustomInputGroupController](#custominputgroupcontroller)
     - [Features](#features)
     - [Usage](#usage)
@@ -19,7 +20,9 @@
 This is a versatile and powerful Vue component that provides a customizable text input field with built-in input validation and seamless management of visual states. With this component, you can easily create robust and visually appealing input forms while simplifying the process of handling input validation and error/success states.
 
 ### Key Features
-Input Validation: The Custom Text Input component comes with comprehensive input validation capabilities. You can define custom validation rules and easily perform real-time validation on the input field, ensuring that the entered data meets the specified criteria.
+- **Input Validation**: The component comes with comprehensive input validation capabilities with the help of ```validator``` library. You can define custom validation rules and easily perform real-time validation on the input field, ensuring that the entered data meets the specified criteria.
+
+- **Real-Time Validation**: As users type in the input field, the data is continuously validated against the defined rules, providing immediate feedback on input validity.
 
 - **Visual State Management**: Managing the visual states of the input component has never been easier. The component allows you to effortlessly handle error and success states, providing visual cues to users based on the input's validity. You can easily customize the styles for error and success states, making it seamless to adapt the component to match your application's design.
 
@@ -50,6 +53,7 @@ This example shows how to use the Custom Input Component in a Vue component. The
       inputType="text"
       :label="'Username'"
       :placeholder="'Enter your username'"
+      :validateCallback="validations.username"
       :styles="{
         input: {
           primary: ['border-primary'],
@@ -76,6 +80,13 @@ export default {
   data() {
     return {
       inputController: new CustomInputGroupController(),
+      validations : {
+        username ({validator, data, error, success}) {
+          let valid = validator.isEmpty()
+          valid ? success('Your name sounds good') : error('Please enter a name')
+          return valid //... must be a boolean
+        },
+      }
       username: ''
     }
   }
@@ -91,7 +102,7 @@ export default {
 | controller        | CustomInputGroupController    |   true       |         | The controller object that manages the state of the input component.                                                                                                                                                                                               |
 | inputType         | String   |    false      | "text"  | The type of input field (e.g., "text", "password", "email", etc.).                                                                                                                                                                                                 |
 | realTimeValidate  | Boolean  |     false     | true    | Flag indicating whether to perform real-time validation on the input field.                                                                                                                                                                                        |
-| validateRule      | Array    |          |         | An array of validation rules for the input field.                                                                                                                                                                                                                  |
+| [validateCallback](#data-validation)      | Function    |     false     |         | A callback function that must return a **boolean** .value                                                                                                                                                               |
 | label             | String   |          |         | The label text for the input field.                                                                                                                                                                                                                                |
 | placeholder       | String   |          |         | The placeholder text for the input field.                                                                                                                                                                                                                          |
 | disabled          | Boolean  |   false       | false   | Flag indicating whether the input field is disabled.                                                                                          |
@@ -110,6 +121,29 @@ export default {
 | input |	value	emitted when the input field value changes. The new value is passed as a parameter.|
 | enter | event emitted if the focus is on the input field and the 'enter' key is pressed. The text value is passed as a parameter. |
 
+## Data validation
+To validate data input using the ````validateCallback```` prop in the component, you can pass a callback function from your parent component. This callback function will be invoked whenever there is a need to validate the input data, such as during real-time validation or when controller's ````validate()```` is invoked. The validateCallback function should return a **boolean** value indicating whether the input data is valid or not.
+
+### Example callback function
+````javascript
+username ({validator, data, error, success}) {
+          let valid = validator.isEmpty()
+          valid ? success('Your name sounds good') : error('Please enter a name')
+          return valid //... must be a boolean
+        },
+````
+
+
+### validateCallback() parameters
+
+| Parameter  | Description                                                                                                                                                                                       |
+|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `data`     | The current input value that needs to be validated. It represents the input data that the callback function should validate. Depending on the input type, this could be a string (for text inputs), a number (for numeric inputs), or other relevant data types.                     |
+| `validator`| A `validator` library instance (e.g., `validator` imported from the `validator` library) that can be used inside the validation callback to perform additional validation checks if needed. The `validator` library provides various validation methods for different data types (e.g., email, length, URL, etc.) that can be used to validate the `data`.  |
+| `error`    | A callback function provided by the `CustomInputState` class that allows you to set an error message for the input if it fails validation. You can call this function and pass the error message as a parameter to indicate that the input is invalid.                                    |
+| `success`  | A callback function provided by the `CustomInputState` class that allows you to set a success message for the input if it passes validation. You can call this function and pass the success message as a parameter to indicate that the input is valid.                             |
+
+
 ## CustomInputGroupController
 
 The Custom Input Group Controller is a class that provides the ability to track the state of multiple input elements and validate them as a group. It is designed to simplify the management of input states and provide a convenient way to validate inputs collectively.
@@ -124,26 +158,21 @@ The Custom Input Group Controller is a class that provides the ability to track 
 
 ## Usage
 
-1. Initializing the Controller: Create an instance of CustomInputGroupController, optionally providing a validator.
+1. Initializing the Controller: Create an instance of CustomInputGroupController.
 
 2. Defining Input States: Use the setState method to define input states within the controller. Each state should have a unique name and a CustomInputState instance for handling validation rules, errors, and input tracking.
 
-3. Validating the Group: Call the validateGroup method to validate the entire input group. The controller checks each input state based on defined rules and returns true if the group is valid, false otherwise.
+3. Validating the Group: Call the ````validate()```` method to validate the entire input group. The controller checks each input state based on defined rules and returns true if the group is valid, false otherwise.
 
 4. Handling Input States: Retrieve individual input states using the getState method, providing the name of the input state. Access properties like input value, error message, and validation status.
 
 ### Constructor
 
 ```javascript
-constructor(validator = null)
+constructor()
 ```
 
 The constructor initializes a new instance of the `CustomInputGroupController` class.
-
-| Parameter  | Type                  | Description                                      | Default |
-| -----------| --------------------- | ------------------------------------------------ | ------- |
-| validator  | `CustomInputState`    | Optional. The validator to be used for validation. | `null`  |
-
 ### Methods
 
 | Method                        | Description                                                                                     |
@@ -167,10 +196,11 @@ The constructor of the `CustomInputState` class accepts an optional object with 
 
 | Property           | Type     | Default | Description                                                                                                       
 |--------------------|----------|---------|-----------------------------|
+| name          | String   | ""  | The name of input field.  (**required**)     
 | inputType          | String   | "text"  | The type of input field.                                                                                          |
 | realTimeValidate   | Boolean  | true    | Flag indicating whether to perform real-time validation.                                                          |
 | disabled           | Boolean  | false   | Flag indicating whether the input field is disabled.                                                              |
-| validateRule       | Array    |         | An array of validation rules.                                                                                     |
+| validateCallback       | Function    |         | A callback function that must return a **boolean** .value                                                                                              |
 | isError            | String   |         | Initial error message.                                                                                            |
 | isSuccess          | String   |         | Initial success message.                                                                                          |
 | isOpt              | Boolean  | false   | Flag indicating whether the input field is optional.                                                              |
