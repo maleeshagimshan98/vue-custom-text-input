@@ -11,6 +11,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "validator": "^13.9.0",
     "vue": "^3.2.41"
   },
   "devDependencies": {
