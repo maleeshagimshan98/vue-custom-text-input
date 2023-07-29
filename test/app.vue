@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-        <comp name="testInput" :controller="inputController"></comp>
+        <comp name="testInput" v-on:enter="val => enter(val)" :controller="inputController"></comp>
     </div>
 </template>
 
@@ -14,7 +14,11 @@ export default {
             inputController: new controller()
         }
     },
-    methods: {},
+    methods: {
+        enter (val) {
+            console.log(val)
+        }
+    },
     components: {
         comp
     }

@@ -106,8 +106,9 @@ export default {
 
 |Event Parameters |	Description |
 |-------------------------|--------------|
-| focus |	event	Emitted when the input field receives focus. The event object is passed as a parameter. |
-| input |	value	Emitted when the input field value changes. The new value is passed as a parameter.|
+| focus |	event	emitted when the input field receives focus. The event object is passed as a parameter. |
+| input |	value	emitted when the input field value changes. The new value is passed as a parameter.|
+| enter | event emitted if the focus is on the input field and the 'enter' key is pressed. The text value is passed as a parameter. |
 
 ## CustomInputGroupController
 

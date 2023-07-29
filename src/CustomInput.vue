@@ -12,7 +12,9 @@
     <input :type="_state.inputType" :placeholder="_state.placeholder" :disabled="_state.isDisabled()"
       class="custom-input-el"
       v-bind:class="!_state.isError() ? _state.isSuccess() ? styles.input.success : styles.input.primary : styles.input.error"
-      v-on:input="event => onInput(event)" v-on:focus="event => $emit('focus', event)" />
+      v-on:input="event => onInput(event)" v-on:focus="event => $emit('focus', event)"
+      v-on:keyup.enter="event => $emit('enter',event.target.value)"
+       />
     <p class="input-message"
       v-bind:class="_state.isError ? styles.errorMessage : _state.isSuccess ? styles.successMessage : ''"
       v-if="_state.message()">
