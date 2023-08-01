@@ -1,26 +1,57 @@
-/**
- * © Maleesha Gimshan - 2021 - github.com/maleeshagimshan98
+/** 
+ * © Maleesha Gimshan - 2021 - github.com/maleeshagimshan98 
  * Custom Input Component
  */
 
 <template>
   <div class="">
     <!-- label-->
-    <p class="input-label" v-bind:class="styles.label" v-if="_state.label">
-      {{ _state.label }}
-    </p>
-    <input :type="_state.inputType" :placeholder="_state.placeholder" :disabled="_state.isDisabled()"
-      class="custom-input-el"
-      v-bind:class="!_state.isError() ? _state.isSuccess() ? styles.input.success : styles.input.primary : styles.input.error"
-      v-on:input="event => onInput(event)" v-on:focus="event => $emit('focus', event)"
-      v-on:keyup.enter="event => $emit('enter',event.target.value)"
-       />
-    <p class="input-message"
-      v-bind:class="_state.isError ? styles.errorMessage : _state.isSuccess ? styles.successMessage : ''"
-      v-if="_state.message()">
-      <!-- Show  Error Messages Here -->
-      {{ _state.message() }}
-    </p>
+    <slot name="label" :state="_state" :controller="controller" :styles="styles">
+      <!-- default content -->
+      <p class="input-label" v-bind:class="styles.label" v-if="_state.label">
+        {{ _state.label }}
+      </p>
+    </slot>
+    
+    <!-- position relative -->
+    <div class="">
+      <!-- position - absolute-->
+      <slot class="" name="inputEnhancements" :state="_state" :controller="controller" :styles="styles">
+
+      </slot>
+      <!-- default content -->
+      <input
+        :type="_state.inputType"
+        :placeholder="_state.placeholder"
+        :disabled="_state.isDisabled()"
+        class="custom-input-el"
+        v-bind:class="
+          !_state.isError()
+            ? _state.isSuccess()
+              ? styles.input.success
+              : styles.input.primary
+            : styles.input.error
+        "
+        v-on:input="(event) => onInput(event)"
+        v-on:focus="(event) => $emit('focus', event)"
+        v-on:keyup.enter="(event) => $emit('enter', event.target.value)" />
+    </div>
+    <slot name="message" :state="_state" :controller="controller" :styles="styles">
+      <!-- default content -->
+      <p
+        class="input-message"
+        v-bind:class="
+          _state.isError
+            ? styles.errorMessage
+            : _state.isSuccess
+            ? styles.successMessage
+            : ''
+        "
+        v-if="_state.message()">
+        <!-- Show  Error Messages Here -->
+        {{ _state.message() }}
+      </p>
+    </slot>
   </div>
 </template>
 
@@ -32,42 +63,41 @@ import CustomInputStyles from "./CustomInputStyles.js"
  * =========================================================
  * check if scoped styles defined in an outer component, can be applied to child one
  * as this component is depending on parent's scoped styles.
- * 
+ *
  * if not working, change customInputStyles from classes to styles
  * =========================================================
  */
-
 
 export default {
   data: function () {
     return {
       //isTyping : false,
-      _state: '',
+      _state: "",
     }
   },
   props: {
     name: {
       type: String,
-      required: true
+      required: true,
     },
     controller: {
-      type: Object
+      type: Object,
     },
     inputType: {
-      type: String
+      type: String,
     },
     realTimeValidate: {
       type: Boolean,
-      default: true
+      default: true,
     },
     validateCallback: {
-      type: Function
+      type: Function,
     },
     label: {
-      type: String
+      type: String,
     },
     placeholder: {
-      type: String
+      type: String,
     },
     disabled: {
       type: Boolean,
@@ -75,47 +105,43 @@ export default {
     },
     isSuccess: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isError: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isOpt: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isReq: {
       type: Boolean,
-      default: false
+      default: false,
     },
     resetOnInput: {
       type: Boolean,
-      default: true
+      default: true,
     },
     styles: {
       type: Object,
       default: () => {
-        return new CustomInputStyles(
-          {
-            input: {
-              primary: ['border-secondary'],
-              focused: ['border-primary'],
-              error: ['border-danger'],
-              success: ['border-success']
-            },
-            label: [],
-            errorMessage: ['text-danger'],
-            successMessage: ['text-success']
-          }
-        );
-      }
+        return new CustomInputStyles({
+          input: {
+            primary: ["border-secondary"],
+            focused: ["border-primary"],
+            error: ["border-danger"],
+            success: ["border-success"],
+          },
+          label: [],
+          errorMessage: ["text-danger"],
+          successMessage: ["text-success"],
+        })
+      },
     },
   },
-  computed: {
-  },
-  components: {
-  },
+  computed: {},
+  components: {},
   methods: {
     onInput: function (event) {
       //this.isTyping = true;
@@ -131,9 +157,10 @@ export default {
     },
   },
   beforeMount: async function () {
-
     if (this.disabled && this.isReq) {
-      throw new Error(`Cannot set the properties disabled and isReq to true at same time`)
+      throw new Error(
+        `Cannot set the properties disabled and isReq to true at same time`
+      )
     }
 
     //... set the controller
@@ -143,7 +170,7 @@ export default {
     this.controller.setState(
       this.name,
       new CustomInputState({
-        name : this.name,
+        name: this.name,
         inputType: this.inputType,
         label: this.label,
         placeholder: this.placeholder,
@@ -154,7 +181,7 @@ export default {
         isError: this.isError,
         isOpt: this.isOpt,
         isReq: this.isReq,
-      }),
+      })
     )
     this._state = this.controller.getState(this.name)
     this._state.setValidateCallback(this.validateCallback)
@@ -170,11 +197,12 @@ export default {
 }
 
 .custom-input-el {
+  position: relative;
   margin: 0;
   padding: 1vh 0;
-  background: '';
-  color: black
-    /** change */
+  background: "";
+  color: black;
+  /** change */
 }
 
 .input-message {
@@ -190,4 +218,5 @@ export default {
   color: red;
   /** change */
 }
-</style>>
+</style>
+>
