@@ -139,6 +139,15 @@ class CustomInputState {
   }
 
   /**
+   * returns this._isValid
+   * 
+   * @returns {Boolean}
+   */
+  isValid () {
+    return this._isValid
+  }
+
+  /**
    * returns this._isError
    *
    * @returns {Boolean}
