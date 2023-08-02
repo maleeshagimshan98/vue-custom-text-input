@@ -1,6 +1,6 @@
 /** 
  * © Maleesha Gimshan - 2021 - github.com/maleeshagimshan98 
- * Custom Input Component
+ * Custom Input Component 
  */
 
 <template>
@@ -8,16 +8,29 @@
     <!-- label-->
     <slot name="label" :state="_state" :controller="controller" :styles="styles">
       <!-- default content -->
-      <p class="input-label" v-bind:class="styles.label" v-if="_state.label">
+      <p
+        class="input-label"
+        v-bind:class="
+          _state.isError()
+            ? styles.label.error
+            : _state.isSuccess()
+            ? styles.label.success
+            : styles.label.primary
+        "
+        v-if="_state.label">
         {{ _state.label }}
       </p>
     </slot>
-    
+
     <!-- position relative -->
     <div class="">
       <!-- position - absolute-->
-      <slot class="" name="inputEnhancements" :state="_state" :controller="controller" :styles="styles">
-
+      <slot
+        class=""
+        name="inputEnhancements"
+        :state="_state"
+        :controller="controller"
+        :styles="styles">
       </slot>
       <!-- default content -->
       <input
@@ -41,11 +54,11 @@
       <p
         class="input-message"
         v-bind:class="
-          _state.isError
-            ? styles.errorMessage
-            : _state.isSuccess
-            ? styles.successMessage
-            : ''
+          _state.isError()
+            ? styles.message.error
+            : _state.isSuccess()
+            ? styles.message.success
+            : styles.message.primary
         "
         v-if="_state.message()">
         <!-- Show  Error Messages Here -->
@@ -133,9 +146,16 @@ export default {
             error: ["border-danger"],
             success: ["border-success"],
           },
-          label: [],
-          errorMessage: ["text-danger"],
-          successMessage: ["text-success"],
+          label: {
+            primary: ["label-secondary"],
+            error: ["label-danger"],
+            success: ["label-success"],
+          },
+          message: {
+            primary: ["message-secondary"],
+            error: ["message-danger"],
+            success: ["message-success"],
+          },
         })
       },
     },
@@ -158,9 +178,7 @@ export default {
   },
   beforeMount: async function () {
     if (this.disabled && this.isReq) {
-      throw new Error(
-        `Cannot set the properties disabled and isReq to true at same time`
-      )
+      throw new Error(`Cannot set the properties disabled and isReq to true at same time`)
     }
 
     //... set the controller
