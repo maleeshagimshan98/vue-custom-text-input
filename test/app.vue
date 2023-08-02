@@ -8,21 +8,21 @@
       >
 
       <template #label="props">
-        <button class="" v-bind:class="props.state.isValid() ? 'valid' : 'not-valid'"> From label slot</button>
+        <button class="" v-bind:class="props.state.isValid() ? 'valid' : 'not-valid' + ` ${props.styles.label.error}`"> From label slot</button>
       </template>
 
       <template #inputEnhancements="props">
-        <h4 class="" v-bind:class="props.state.isValid() ? 'valid' : 'not-valid'"> From label slot</h4>
+        <h4 class="" v-bind:class="props.state.isValid() ? 'valid' : 'not-valid'"> From inputEnhancement slot</h4>
       </template>
     </comp>
 
-      <comp
-      name="testInput2"
-      style="margin-top: 50px;"
-      v-on:enter="(val) => enter(val)"
-      :controller="inputController"
-      :validate="(validator, data, error, success) =>  true"
-      ></comp>
+    <comp
+    name="testInput2"
+    style="margin-top: 50px;"
+    v-on:enter="(val) => enter(val)"
+    :controller="inputController"
+    :validateCallback="(validator, data, error, success) =>  true"
+    ></comp>
   </div>
 </template>
 
