@@ -56,14 +56,21 @@ This example shows how to use the Custom Input Component in a Vue component. The
       :validateCallback="validations.username"
       :styles="{
         input: {
-          primary: ['border-primary'],
-          focused: ['border-secondary'],
-          error: ['border-danger'],
-          success: ['border-success']
-        },
-        label: ['text-primary'],
-        errorMessage: ['text-danger'],
-        successMessage: ['text-success']
+            primary: ["border-secondary"],
+            focused: ["border-primary"],
+            error: ["border-danger"],
+            success: ["border-success"],
+          },
+          label: {
+            primary: ["label-secondary"],
+            error: ["label-danger"],
+            success: ["label-success"],
+          },
+          message: {
+            primary: ["message-secondary"],
+            error: ["message-danger"],
+            success: ["message-success"],
+          }
       }"
       v-model="username"
     />
@@ -227,9 +234,16 @@ The `styles` prop allows you to customize the styles of the input field and rela
     error: [],      // CSS classes for the error input style
     success: []     // CSS classes for the success input style
   },
-  label: [],        // CSS classes for the label style
-  errorMessage: [], // CSS classes for the error message style
-  successMessage: [] // CSS classes for the success message style
+  label: { // CSS classes for the label style
+    primary: [],
+    error: [],
+    success: [],
+  }    
+  message: { // CSS classes for the label style
+    primary: [],
+    error: [],
+    success: [],
+  }
 }
 ```
 
