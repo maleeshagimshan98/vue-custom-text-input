@@ -3,4 +3,4 @@ import CustomInputState from "./CustomInputState"
 import CustomInputGroupController from "./CustomInputGroupController"
 import CustomInputStyles from "./CustomInputStyles"
 
-export default {CustomInput,CustomInputState, CustomInputGroupController, CustomInputStyles}
+export {CustomInput,CustomInputState, CustomInputGroupController, CustomInputStyles}
