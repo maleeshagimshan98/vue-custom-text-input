@@ -7,12 +7,12 @@
       :validateCallback="validations.testInput"
       >
 
-      <template #label="props">
-        <button class="" v-bind:class="props.state.isValid() ? 'valid' : 'not-valid' + ` ${props.styles.label.error}`"> From label slot</button>
+      <template #label="{state, styles, controller}">
+        <button class="" v-bind:class="state.isValid() ? 'valid' : 'not-valid' + ` ${styles.label.error}`"> From label slot</button>
       </template>
 
-      <template #inputEnhancements="props">
-        <h4 class="" v-bind:class="props.state.isValid() ? 'valid' : 'not-valid'"> From inputEnhancement slot</h4>
+      <template #inputEnhancements="{state, styles, controller}">
+        <h4 class="" v-bind:class="state.isValid() ? 'valid' : 'not-valid'"> From inputEnhancement slot</h4>
       </template>
     </comp>
 
