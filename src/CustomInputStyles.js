@@ -18,11 +18,13 @@ class CustomInputStyles {
     }
     this.label = {
       primary: [],
+      focused: [],
       error: [],
       success: [],
     }
     this.message = {
       primary: [],
+      focused: [],
       error: [],
       success: [],
     }
@@ -51,9 +53,8 @@ class CustomInputStyles {
   /**
    * initialize styles
    *
-   * @param {Object} input
-   * @param {Object} label
-   * @param {Object} message
+   * @param {Object} styles
+   * @returns {void}
    */
   _init(styles) {
     ["input", "label", "message"].forEach((element) => {
