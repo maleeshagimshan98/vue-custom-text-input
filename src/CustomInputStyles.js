@@ -11,18 +11,21 @@ class CustomInputStyles {
    */
   constructor({ input, label, message }) {
     this.input = {
+      base: [],
       primary: [],
       focused: [],
       error: [],
       success: [],
     }
     this.label = {
+      base: [],
       primary: [],
       focused: [],
       error: [],
       success: [],
     }
     this.message = {
+      base: [],
       primary: [],
       focused: [],
       error: [],
@@ -43,7 +46,7 @@ class CustomInputStyles {
     if (Array.isArray(style)) {
       return style
     }
-    if (typeof style == "string") {
+    if (typeof style === "string") {
       return [style]
     } else {
       throw new Error("Type of input style is not supported")
@@ -57,13 +60,18 @@ class CustomInputStyles {
    * @returns {void}
    */
   _init(styles) {
-    ["input", "label", "message"].forEach((element) => {
-      for (let prop in styles[element]) {
-        if (!styles[element][prop]) {
-          continue
-        }
-        this[element][prop] = this._checkParamTypesAndPrepare(styles[element][prop])
+    let styleStates = ["base", "primary", "focused", "error", "success"]
+
+    ;["input", "label", "message"].forEach((element) => {
+      if (!styles[element]) {
+        return
       }
+      styleStates.forEach((state) => {
+        if (!styles[element][state]) {
+          return
+        }
+        this[element][state] = this._checkParamTypesAndPrepare(styles[element][state])
+      })
     })
   }
 }
