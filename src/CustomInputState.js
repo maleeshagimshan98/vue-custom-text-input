@@ -17,12 +17,16 @@ class CustomInputState {
     label,
     placeholder,
     realTimeValidate,
+    validateCallback,
     disabled,
     initErrorMsg,
     initSuccessMsg,
-    isOpt,
     isReq,
+    isValid,
   } = {}) {
+    if (!name) {
+      throw new Error(`CustomInputState requires a name but ${name} passed`)
+    }
     //...
     //validateRule : ['email | length > 8', 'ERROR_MESSSAGE', 'SUCCESS_MESSAGE'], etc. - refer to ''
     //isError : 'Error_Message_Here', - initialise with an error message
@@ -35,19 +39,15 @@ class CustomInputState {
     this._realTimeValidate = realTimeValidate ?? true
     this._validateCallback
     this._disabled = disabled ?? false
-    this._isValid = true
+    this._isValid = isValid
     this._isSuccess = false
-    this._isError = false
-    this._isOpt = isOpt ?? false
-    this._isReq = isReq ?? false
+    this._isReq = isReq ?? true
     this._validator
-    this._message = ""
+    this._isFocused = false
+    this._messages = []
 
-    initErrorMsg
-      ? this.error(initErrorMsg)
-      : initSuccessMsg
-      ? this.success(initSuccessMsg)
-      : false
+    initErrorMsg ? this.error(initErrorMsg) : initSuccessMsg ? this.success(initSuccessMsg) : false
+    validateCallback ? this.setValidateCallback(validateCallback) : null
   }
 
   /**
@@ -98,14 +98,16 @@ class CustomInputState {
 
   /**
    * set the validation callback function
-   * 
-   * @param {Function} callback 
+   *
+   * @param {Function} callback
    * @returns {void}
    * @throws {Error}
    */
   setValidateCallback(callback) {
     if (callback && typeof callback !== "function") {
-      throw new Error(`Validation callback passed to '${this._name}' is not a function`)
+      throw new Error(
+        `Validation callback provided to CustomInputState '${this._name}' is not a valid function. Please ensure that the validation callback is a function.`
+      )
     }
     this._validateCallback = callback
   }
@@ -140,20 +142,11 @@ class CustomInputState {
 
   /**
    * returns this._isValid
-   * 
-   * @returns {Boolean}
-   */
-  isValid () {
-    return this._isValid
-  }
-
-  /**
-   * returns this._isError
    *
    * @returns {Boolean}
    */
-  isError() {
-    return this._isError
+  isValid() {
+    return this._isValid
   }
 
   /**
@@ -175,15 +168,6 @@ class CustomInputState {
   }
 
   /**
-   * returns true if this input is optional
-   *
-   * @returns {Boolean}
-   */
-  isOpt() {
-    return this._isOpt
-  }
-
-  /**
    * returns true if this input is required
    *
    * @returns {Boolean}
@@ -193,16 +177,26 @@ class CustomInputState {
   }
 
   /**
+   *
+   * @param {Boolean} isError
+   * @param {String} message
+   */
+  _addMessage(isError, message) {
+    this._messages.push({ isError: !isError, message: message })
+  }
+
+  /**
    * set state to error
    *
    * @param {string} message error message
    * @returns void
    */
   error(message) {
-    this._isError = true
     this._isSuccess = false
     this._isValid = false
-    this._message = message
+    if (message) {
+      this._addMessage(this._isValid, message)
+    }
   }
 
   /**
@@ -212,10 +206,11 @@ class CustomInputState {
    * @return void
    */
   success(message = "") {
-    this._isError = false
     this._isValid = true
     this._isSuccess = true
-    this._message = message
+    if (message) {
+      this._addMessage(this._isValid, message)
+    }
   }
 
   /**
@@ -224,10 +219,27 @@ class CustomInputState {
    * @returns void
    */
   reset() {
-    this._isError = false
     this._isSuccess = false
-    this._isValid = false
-    this._message = ""
+    this._isValid = true
+    this._messages = []
+  }
+
+  /**
+   *
+   * @param {Array} stack
+   * @param {String} inputData
+   * @returns {Boolean}
+   */
+  _validateStack(stack, inputData) {
+    let isValid = true
+    stack.forEach((rule) => {
+      let valid = rule[0](inputData) 
+      !valid ? this.error(rule[1] ?? "") : this.success(rule[2] ?? "")
+      if (!valid) {
+        isValid = false
+      }
+    })
+    return isValid
   }
 
   /**
@@ -240,41 +252,74 @@ class CustomInputState {
   validate(data) {
     if (!this._validateCallback) {
       console.warn(
-        `custom-text-input '${this._name}' does not have a passed callback to validate the input`
+        `CustomInputState '${this._name}' is missing a validation callback for input validation. Make sure to provide a valid validation callback when initializing the custom input.`
       )
       return true
     }
 
     if (!this._validator) {
-      throw new Error(`A validator is not defined`)
+      throw new Error(
+        `Validation failed in CustomInputState '${this._name}': A validator function is not defined. Please provide a valid validator function during initialization.`
+      )
     }
 
     if (this._disabled) {
       return true
     }
 
-    let isValid = this._validateCallback({
+    let isValid
+    this._validateCallback({
       validator: this._validator,
-      data,
-      error: (message) => this.error(message),
-      success: (message) => this.success(message),
+      validateStack: (stack) => {
+        this._messages = []
+        isValid = this._validateStack(stack, data)
+        return isValid
+      },
     })
+
     if (typeof isValid !== "boolean") {
       throw new Error(
         `the callback function passed custom-text-input '${this._name}' must return a boolean value but returned ${isValid}`
       )
     }
     this._isValid = isValid
+    this._isSuccess = isValid
     return this._isValid
   }
 
   /**
-   * Getter for the `message` property.
    *
-   * @returns {string} The current value of the `message` property.
+   * @returns Boolean
    */
-  message() {
-    return this._message
+  hasMessages() {
+    return this._messages.length > 0
+  }
+
+  /**
+   * Getter for the `messages` property.
+   *
+   * @returns {Array} The messages array containing error and success messages.
+   */
+  messages() {
+    return this._messages
+  }
+
+  /**
+   * Set the input's focused state
+   *
+   * @returns {void}
+   */
+  setFocused(value) {
+    this._isFocused = value
+  }
+
+  /**
+   * Get the foucused state
+   *
+   * @returns {Boolean}
+   */
+  isFocused() {
+    return this._isFocused
   }
 }
 
