@@ -45,6 +45,7 @@ class CustomInputState {
     this._validator
     this._isFocused = false
     this._messages = []
+    this._isValidationPass = isValid
 
     initErrorMsg ? this.error(initErrorMsg) : initSuccessMsg ? this.success(initSuccessMsg) : false
     validateCallback ? this.setValidateCallback(validateCallback) : null
@@ -182,7 +183,10 @@ class CustomInputState {
    * @param {String} message
    */
   _addMessage(isError, message) {
-    this._messages.push({ isError: !isError, message: message })
+    if (isError) {
+      this._isValidationPass = false
+    }
+    this._messages.push({ isError: isError, message: message })
   }
 
   /**
@@ -194,9 +198,12 @@ class CustomInputState {
   error(message) {
     this._isSuccess = false
     this._isValid = false
-    if (message) {
-      this._addMessage(this._isValid, message)
+    this._isValidationPass = false
+    if (!message) {
+      console.warn(`CustomInputState: error() method requires a message to be a string. But ${message} found.`)
+      return      
     }
+    this._addMessage(true, message)
   }
 
   /**
@@ -209,7 +216,7 @@ class CustomInputState {
     this._isValid = true
     this._isSuccess = true
     if (message) {
-      this._addMessage(this._isValid, message)
+      this._addMessage(false, message)
     }
   }
 
@@ -221,27 +228,10 @@ class CustomInputState {
   reset() {
     this._isSuccess = false
     this._isValid = true
+    this._isValidationPass = true
     this._messages = []
   }
-
-  /**
-   *
-   * @param {Array} stack
-   * @param {String} inputData
-   * @returns {Boolean}
-   */
-  _validateStack(stack, inputData) {
-    let isValid = true
-    stack.forEach((rule) => {
-      let valid = rule[0](inputData) 
-      !valid ? this.error(rule[1] ?? "") : this.success(rule[2] ?? "")
-      if (!valid) {
-        isValid = false
-      }
-    })
-    return isValid
-  }
-
+ 
   /**
    * validate the input with the given validation rules
    *
@@ -266,24 +256,19 @@ class CustomInputState {
     if (this._disabled) {
       return true
     }
+    
+    let validationStack = this._validateCallback(this._validator)
+    validationStack(
+      data,
+      (message) => this.error(message),
+      (message) => this.success(message),
+      () => this.reset(),
+    )
 
-    let isValid
-    this._validateCallback({
-      validator: this._validator,
-      validateStack: (stack) => {
-        this._messages = []
-        isValid = this._validateStack(stack, data)
-        return isValid
-      },
-    })
-
-    if (typeof isValid !== "boolean") {
-      throw new Error(
-        `the callback function passed custom-text-input '${this._name}' must return a boolean value but returned ${isValid}`
-      )
+    this._isValid = this._isValidationPass
+    if (!this._isValidationPass) {
+      this._isSuccess = false
     }
-    this._isValid = isValid
-    this._isSuccess = isValid
     return this._isValid
   }
 
