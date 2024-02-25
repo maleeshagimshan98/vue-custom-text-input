@@ -113,9 +113,7 @@ export default {
       validations : {
         username () {
           return ({validator, data, error, success}) => {
-          let valid = validator.isEmpty()
-          valid ? success('Your name sounds good') : error('Please enter a name')
-          return valid //... must be a boolean
+            validator.isEmpty() ? success('Your name sounds good') : error('Please enter a name')
           }
         },
       }
