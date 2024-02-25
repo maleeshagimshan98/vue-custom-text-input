@@ -1,4 +1,7 @@
-/** * © Maleesha Gimshan - 2021 - github.com/maleeshagimshan98 * Custom Input Component */
+/** 
+ * © Maleesha Gimshan - 2021 - github.com/maleeshagimshan98 
+ * Custom Input Component 
+ */
 
 <template>
   <div class="">
@@ -20,9 +23,14 @@
     </slot>
 
     <!-- position relative -->
-    <div class="custom-input-wrapper">
+    <div class="">
       <!-- position - absolute-->
-      <slot name="inputEnhancements" :state="_state" :controller="controller" :styles="styles">
+      <slot
+        class=""
+        name="inputEnhancements"
+        :state="_state"
+        :controller="controller"
+        :styles="styles">
       </slot>
       <!-- default content -->
       <input
@@ -108,15 +116,21 @@ export default {
       type: Boolean,
       default: false,
     },
-    initSuccessMsg: {      
-      type: String,
+    isSuccess: {
+      type: Boolean,
+      default: false,
     },
-    initErrorMsg: {      
-      type: String,
+    isError: {
+      type: Boolean,
+      default: false,
+    },
+    isOpt: {
+      type: Boolean,
+      default: false,
     },
     isReq: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     resetOnInput: {
       type: Boolean,
@@ -181,8 +195,9 @@ export default {
         realTimeValidate: this.realTimeValidate,
         disabled: this.disabled,
         isValid: true,
-        initSuccessMsg: this.initSuccessMsg,
-        initErrorMsg: this.initErrorMsg,
+        isSuccess: this.isSuccess,
+        isError: this.isError,
+        isOpt: this.isOpt,
         isReq: this.isReq,
       })
     )
@@ -196,6 +211,7 @@ export default {
 .input-label {
   padding: 0;
   margin: 0;
+  font-size: 15px;
 }
 
 .custom-input-el {
@@ -207,11 +223,18 @@ export default {
   /** change */
 }
 
-.custom-input-wrapper {
-  position: relative;
-}
-
 .input-message {
   margin: 0;
 }
+
+.input-message.success {
+  color: green;
+  /** change */
+}
+
+.input-message.error {
+  color: red;
+  /** change */
+}
 </style>
+>
