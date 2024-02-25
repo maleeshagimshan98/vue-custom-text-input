@@ -28,6 +28,7 @@
         :disabled="_state.isDisabled()"
         class="custom-input-el"
         v-bind:class="[styles.input.base, computeStyleObj(styles.input)]"
+        v-bind:value="controller.getValue(name)"
         v-on:input="(event) => onInput(event)"
         v-on:focus.stop="(event) => focus(event)"
         v-on:focusout.stop="(event) => focusOut(event)"
@@ -107,7 +108,7 @@ export default {
     styles: {
       type: CustomInputStyles,
       default: () => {
-        return new CustomInputStyles({
+        return new CustomInputStyles(/*{
           input: {
             base: ["test-input-base", "test-input-second-class"],
             primary: ["test-input-primary"],
@@ -129,7 +130,7 @@ export default {
             error: ["test-message-error"],
             success: ["test-message-success"],
           },
-        })
+        }*/)
       },
     },
   },
