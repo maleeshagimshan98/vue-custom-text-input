@@ -345,6 +345,17 @@ class CustomTextInputGroupController {
   }
 
   /**
+   * Reset all the data of the inputs in the controller
+   *
+   * @return {void}
+   */
+  resetAllData() {
+    for (let data in this._data) {
+      this._data[data] = ''
+    }
+  }
+
+  /**
    *
    */
   validate() {
