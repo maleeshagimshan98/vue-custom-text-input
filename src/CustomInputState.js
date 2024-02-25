@@ -39,13 +39,13 @@ class CustomInputState {
     this._realTimeValidate = realTimeValidate ?? true
     this._validateCallback
     this._disabled = disabled ?? false
-    this._isValid = isValid
+    this._isValid = isValid ?? true
     this._isSuccess = false
     this._isReq = isReq ?? true
     this._validator
     this._isFocused = false
     this._messages = []
-    this._isValidationPass = isValid
+    this._isValidationPass = isValid ?? true
 
     initErrorMsg ? this.error(initErrorMsg) : initSuccessMsg ? this.success(initSuccessMsg) : false
     validateCallback ? this.setValidateCallback(validateCallback) : null
