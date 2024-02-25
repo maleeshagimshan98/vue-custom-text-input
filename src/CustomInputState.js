@@ -200,8 +200,10 @@ class CustomInputState {
     this._isValid = false
     this._isValidationPass = false
     if (!message) {
-      console.warn(`CustomInputState: error() method requires a message to be a string. But ${message} found.`)
-      return      
+      console.warn(
+        `CustomInputState: error() method requires a message to be a string. But ${message} found.`
+      )
+      return
     }
     this._addMessage(true, message)
   }
@@ -231,7 +233,7 @@ class CustomInputState {
     this._isValidationPass = true
     this._messages = []
   }
- 
+
   /**
    * validate the input with the given validation rules
    *
@@ -256,14 +258,15 @@ class CustomInputState {
     if (this._disabled) {
       return true
     }
-    
-    let validationStack = this._validateCallback(this._validator)
-    validationStack(
-      data,
-      (message) => this.error(message),
-      (message) => this.success(message),
-      () => this.reset(),
-    )
+
+    let validationStack = this._validateCallback()
+    validationStack({
+      data: data,
+      validator: this._validator,
+      error: (message) => this.error(message),
+      success: (message) => this.success(message),
+      reset: () => this.reset(),
+    })
 
     this._isValid = this._isValidationPass
     if (!this._isValidationPass) {

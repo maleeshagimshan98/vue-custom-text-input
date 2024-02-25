@@ -65,14 +65,14 @@ export default {
         //   ])
         //   return valid
         // },
-        testInput: (validator) => {
-          return (data, error, success, reset) => {
+        testInput: () => {
+          return ({data, validator, error, success, reset}) => {
               validator.isEmail(data) ? success(`This is an email`) : error(`input value ${data} is not an email`)
               !validator.isEmpty(data) ? success (`Not empty`) : error(`This cannot be empty`)
             }
         },
-        testInput2: (validator) => {
-          return (data, error, success, reset) => {
+        testInput2: () => {
+          return ({data, validator, error, success, reset}) => {
             if (!data) {
               reset()
               return
