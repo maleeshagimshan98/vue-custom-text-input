@@ -6,14 +6,7 @@
     <slot name="label" :state="_state" :controller="controller" :styles="styles">
       <!-- default content -->
       <p
-        class="input-label"
-        v-bind:class="
-          _state.isError()
-            ? styles.label.error
-            : _state.isSuccess()
-            ? styles.label.success
-            : styles.label.primary
-        "
+        v-bind:class="[styles.label.base, computeStyleObj(styles.label)]"
         v-if="_state.label">
         {{ _state.label }}
       </p>
@@ -22,7 +15,11 @@
     <!-- position relative -->
     <div class="custom-input-wrapper">
       <!-- position - absolute-->
-      <slot name="inputEnhancements" :state="_state" :controller="controller" :styles="styles">
+      <slot
+        name="inputEnhancements"
+        :state="_state"
+        :controller="controller"
+        :styles="styles">
       </slot>
       <!-- default content -->
       <input
@@ -30,31 +27,21 @@
         :placeholder="_state.placeholder"
         :disabled="_state.isDisabled()"
         class="custom-input-el"
-        v-bind:class="
-          !_state.isError()
-            ? _state.isSuccess()
-              ? styles.input.success
-              : styles.input.primary
-            : styles.input.error
-        "
+        v-bind:class="[styles.input.base, computeStyleObj(styles.input)]"
+        v-bind:value="controller.getValue(name)"
         v-on:input="(event) => onInput(event)"
-        v-on:focus="(event) => $emit('focus', event)"
-        v-on:keyup.enter="(event) => $emit('enter', event.target.value)" />
+        v-on:focus.stop="(event) => focus(event)"
+        v-on:focusout.stop="(event) => focusOut(event)"
+        v-on:keyup.enter.stop="(event) => enter(event)"
+        :ref="'input'" />
     </div>
     <slot name="message" :state="_state" :controller="controller" :styles="styles">
       <!-- default content -->
       <p
-        class="input-message"
-        v-bind:class="
-          _state.isError()
-            ? styles.message.error
-            : _state.isSuccess()
-            ? styles.message.success
-            : styles.message.primary
-        "
-        v-if="_state.message()">
-        <!-- Show  Error Messages Here -->
-        {{ _state.message() }}
+        v-bind:class="[styles.message.base, computeStyleObj(styles.message)]"
+        v-if="_state.hasMessages()">
+        <!-- Show Only First Error Message Here -->
+        {{ _state.messages()[0].message }}
       </p>
     </slot>
   </div>
@@ -64,16 +51,8 @@
 import CustomInputState from "./CustomInputState.js"
 import CustomInputStyles from "./CustomInputStyles.js"
 
-/**
- * =========================================================
- * check if scoped styles defined in an outer component, can be applied to child one
- * as this component is depending on parent's scoped styles.
- *
- * if not working, change customInputStyles from classes to styles
- * =========================================================
- */
-
 export default {
+  name  : 'vue-custom-text-input',
   data: function () {
     return {
       //isTyping : false,
@@ -108,13 +87,17 @@ export default {
       type: Boolean,
       default: false,
     },
-    initSuccessMsg: {      
+    initSuccessMsg: {
       type: String,
     },
-    initErrorMsg: {      
+    initErrorMsg: {
       type: String,
     },
     isReq: {
+      type: Boolean,
+      default: true,
+    },
+    isValid: {
       type: Boolean,
       default: true,
     },
@@ -123,32 +106,57 @@ export default {
       default: true,
     },
     styles: {
-      type: Object,
+      type: CustomInputStyles,
       default: () => {
-        return new CustomInputStyles({
+        return new CustomInputStyles(/*{
           input: {
-            primary: ["border-secondary"],
-            focused: ["border-primary"],
-            error: ["border-danger"],
-            success: ["border-success"],
+            base: ["test-input-base", "test-input-second-class"],
+            primary: ["test-input-primary"],
+            focused: ["test-input-focused"],
+            error: ["test-input-error"],
+            success: ["test-input-success"],
           },
           label: {
-            primary: ["label-secondary"],
-            error: ["label-danger"],
-            success: ["label-success"],
+            base: ["test-label-base"],
+            primary: ["test-label-primary"],
+            focused: ["test-label-focused"],
+            error: ["test-label-error"],
+            success: ["test-label-success"],
           },
           message: {
-            primary: ["message-secondary"],
-            error: ["message-danger"],
-            success: ["message-success"],
+            base: ["test-message-base"],
+            primary: ["test-message-primary"],
+            focused: ["test-message-focused"],
+            error: ["test-message-error"],
+            success: ["test-message-success"],
           },
-        })
+        }*/)
       },
     },
   },
   computed: {},
   components: {},
-  methods: {
+  methods: {    
+    computeStyleObj(elementStyle) {
+      return {
+        [elementStyle.primary.join(" ")]: this._state.isValid() && !this._state.isSuccess(),
+        [elementStyle.success.join(" ")]: this._state.isSuccess(),
+        [elementStyle.error.join(" ")]: !this._state.isValid(),
+       // [elementStyle.focused.join(" ")]: this._state.isFocused(),
+      }
+    },
+    focus(event) {
+      this.controller.focusByName(this.name)
+      this.$emit("focus", event)
+    },
+    focusOut(event) {
+      this.controller.setCurrentInputStateFocusOut()
+      this.$emit("focusout", event)
+    },
+    enter(event) {
+      this.controller.focusNext()
+      this.$emit("enter", event.target.value)
+    },
     onInput: function (event) {
       //this.isTyping = true;
       if (this.resetOnInput) {
@@ -179,39 +187,29 @@ export default {
         label: this.label,
         placeholder: this.placeholder,
         realTimeValidate: this.realTimeValidate,
+        validateCallback: this.validateCallback,
         disabled: this.disabled,
-        isValid: true,
         initSuccessMsg: this.initSuccessMsg,
         initErrorMsg: this.initErrorMsg,
         isReq: this.isReq,
+        isValid: this.isValid,
       })
     )
     this._state = this.controller.getState(this.name)
-    this._state.setValidateCallback(this.validateCallback)
+  },
+  mounted() {
+    this.controller.setInputRef(this.name, this.$refs.input)
   },
 }
 </script>
 
 <style scoped>
-.input-label {
-  padding: 0;
-  margin: 0;
-}
-
 .custom-input-el {
   position: relative;
-  margin: 0;
-  padding: 1vh 0;
-  background: "";
-  color: black;
   /** change */
 }
 
 .custom-input-wrapper {
   position: relative;
-}
-
-.input-message {
-  margin: 0;
 }
 </style>
