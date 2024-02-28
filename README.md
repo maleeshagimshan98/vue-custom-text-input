@@ -1,5 +1,10 @@
 # Vue Custom Text Input
 
+[![Documentation](https://img.shields.io/badge/Documentation-Yes-brightgreen.svg)](https://github.com/your-username/your-project/blob/main/README.md)
+[![Beginner Friendly](https://img.shields.io/badge/Beginner%20Friendly-Yes-brightgreen.svg)](https://github.com/your-username/your-project/blob/main/README.md)
+[![npm](https://img.shields.io/npm/v/vue-custom-text-input.svg)](https://www.npmjs.com/package/vue-custom-text-input)
+[![Vue.js](https://img.shields.io/badge/Vue.js-3.x-brightgreen.svg)](https://vuejs.org/)
+
 ## 📦 Vue-Custom-Text-Input v1.2.0 Released!
 
 **New features and improvements:**
