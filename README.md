@@ -221,23 +221,23 @@ The constructor initializes a new instance of the `CustomInputGroupController` c
 
 ### Methods
 
-| Method                                 | Description                                                                              |
-| -------------------------------------- | ---------------------------------------------------------------------------------------- | --- | --- |
-| `getState(name)`                       | Returns the `CustomInputState` object for the given input name.                          |
-| `setState(name, state)`                | Sets the `CustomInputState` object for the given input name.                             |
-| `setData(name, data)`                  | Sets the input value for the corresponding input name.                                   |
-| `getAllData()`                         | Returns the whole input values as key-value pairs.                                       |
-| `getValue(name)`                       | Returns the value of a single input provided the input's name.                           |
-| `getInputRefInstance(name)`            | Get a component instance by name                                                         |
-| `setInputRefInstance(name, component)` | Set a component instance                                                                 |
-| `focusNext()`                          | Focus the next input element                                                             |
-| `focusByName(name)`                    | Focus a provided input element by a name                                                 |
-| `setStateError(name, message)`         | Sets an error message for the given input name.                                          |
-| `setStateSuccess(name, message)`       | Sets a success message for the given input name.                                         |
-| `resetState(name)`                     | Resets the state of the input with the given name.                                       |
-| `resetAllStates()`                     | Reset all the state in the controller.                                                   |
-| `resetAllData()`                       | Reset all the data of the inputs in the controller.                                      |
-| `validate()`                           | Validates the input group and returns `true` if all inputs are valid, otherwise `false`. |     |     |
+| Method | Description |
+|---|---|
+| `getState(name)` | Returns the `CustomInputState` object for the given input name. |
+| `setState(name, state)` | Sets the `CustomInputState` object for the given input name. |
+| `setData(name, data)` | Sets the input value for the corresponding input name. |
+| `getAllData()` | Returns the whole input values as key-value pairs. |
+| `getValue(name)` | Returns the value of a single input provided the input's name. |
+| `getInputRefInstance(name)` | Get a component instance by name |
+| `setInputRefInstance(name, component)` | Set a component instance |
+| `focusNext()` | Focus the next input element |
+| `focusByName(name)` | Focus a provided input element by a name |
+| `setStateError(name, message)` | Sets an error message for the given input name. |
+| `setStateSuccess(name, message)` | Sets a success message for the given input name. |
+| `resetState(name)` | Resets the state of the input with the given name. |
+| `resetAllStates()` | Reset all the state in the controller. |
+| `resetAllData()` | Reset all the data of the inputs in the controller. |
+| `validate()` | Validates the input group and returns `true` if all inputs are valid, otherwise `false`. |
 
 ## CustomInputState Class - _(used internally_)
 
