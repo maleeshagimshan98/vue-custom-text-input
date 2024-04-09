@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <comp name="testInput" :styles="styles" v-on:enter="(val) => enter(val)" :controller="inputController"
-      :validateCallback="validations.testInput" :initSuccessMsg="'init success'">
+      :initSuccessMsg="'init success'">
       <template #label="{ state, styles, controller }">
         <button class="" @click="resetStates()"
           v-bind:class="state.isValid() ? 'valid' : 'not-valid' + ` ${styles.label.error}`">
@@ -17,16 +17,35 @@
       </template>
     </comp>
 
-    <comp name="testInput2" style="margin-top: 50px" :styles="styles" :label="'input 2'" v-on:enter="(val) => enter(val)"
-      :controller="inputController" :validateCallback="validations.testInput2"></comp>
+    <comp name="testInput2" style="margin-top: 50px" :styles="styles" :label="'input 2'"
+      v-on:enter="(val) => enter(val)" :controller="inputController"></comp>
   </div>
 </template>
 
 <script>
-import {ref} from "vue"
-import { CustomInput as comp, CustomTextInputGroupController as controller, CustomInputStyles } from "../src/index.js"
-//import controller from "../src/CustomInputGroupController.js"
+import { ref } from "vue"
+import { CustomInput as comp, CustomTextInputGroupController as controller, CustomInputStyles, Utils } from "../src/index.js"
 
+const validations = {
+  testInput: () => {
+    return ({ data, validator, error, success, reset }) => {
+      validator.isEmail(data) ? success(`This is an email`) : error(`input value ${data} is not an email`)
+      !validator.isEmpty(data) ? success(`Not empty`) : error(`This cannot be empty`)
+    }
+  },
+  testInput2: () => {
+    return ({ data, validator, error, success, reset }) => {
+      if (!data) {
+        reset()
+        return
+      }
+      validator.isEmail(data) ? success(`This is an email`) : error(`input value ${data} is not an email`)
+      // !validator.isEmpty(data) ? success (`Not empty`) : error(`This cannot be empty`)
+    }
+  },
+}
+
+//import controller from "../src/CustomInputGroupController.js"
 const styles = new CustomInputStyles({
   input: {
     base: ["cust-input"],
@@ -54,34 +73,8 @@ const styles = new CustomInputStyles({
 export default {
   data() {
     return {
-      styles :  styles,
-      inputController: ref(new controller()),
-      validations: {
-        // testInput: ({ validator, validationStack, error, success }) => {
-        //   // this.inputController.focusNext()
-        //   let valid = validationStack([
-        //     [(val) => validator.isEmail(val), "This is not an email", "Okay"],
-        //     [(val) => !validator.isEmpty(val), "This cannot be empty", "Okay"],
-        //   ])
-        //   return valid
-        // },
-        testInput: () => {
-          return ({data, validator, error, success, reset}) => {
-              validator.isEmail(data) ? success(`This is an email`) : error(`input value ${data} is not an email`)
-              !validator.isEmpty(data) ? success (`Not empty`) : error(`This cannot be empty`)
-            }
-        },
-        testInput2: () => {
-          return ({data, validator, error, success, reset}) => {
-            if (!data) {
-              reset()
-              return
-            }
-              validator.isEmail(data) ? success(`This is an email`) : error(`input value ${data} is not an email`)
-              // !validator.isEmpty(data) ? success (`Not empty`) : error(`This cannot be empty`)
-            }
-        },
-      },
+      styles: styles,
+      inputController: ref(new controller(validations)),
     }
   },
   methods: {
@@ -97,7 +90,7 @@ export default {
   components: {
     comp,
   },
-  mounted () {
+  mounted() {
     this.inputController.setData('testInput', 'someone@example.co')
   },
 }
