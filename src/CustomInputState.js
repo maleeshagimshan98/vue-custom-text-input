@@ -28,9 +28,9 @@ class CustomInputState {
       throw new Error(`CustomInputState requires a name but ${name} passed`)
     }
     //...
-    //validateRule : ['email | length > 8', 'ERROR_MESSSAGE', 'SUCCESS_MESSAGE'], etc. - refer to ''
-    //isError : 'Error_Message_Here', - initialise with an error message
-    //isSuccess : 'Success_Message_Here' - initialise with an error message
+    //validateCallback : () => {}
+    //initErrorMsg : 'Error_Message_Here', - initialise with an error message
+    //initSuccessMsg : 'Success_Message_Here' - initialise with an error message
 
     this._name = name
     this._inputType = inputType ?? "text"
