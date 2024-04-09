@@ -10,18 +10,46 @@ import CustomInputState from "./CustomInputState"
 import DefaulValidator from "validator"
 
 class CustomTextInputGroupController {
-  constructor() {
+  constructor(validations) {
     this._currentFocusedInputIndex = 0
     this._currentFocusedInputState
     this._inputRefs = []
     this._states = {}
     this._data = {}
+    this._validations = this._initValidations(validations)
     /**
      *
      * ATTENTION
      * INITIALIZE A VALIDATOR - ATLEAST A DEFAULT VALIDATOR
      */
     this._validator = DefaulValidator
+  }
+
+  /**
+   * Check the validations and initialize them in the class
+   * 
+   * @param {object} validations 
+   * @return {Object}
+   * @throws {Error}
+   */
+  _initValidations(validations) {
+    if (!typeof  validations === "object") {
+      throw new Error(`CustomTextInputGroupController - validations must be an object containing validation methods but ${validations} passed`)      
+    }
+    if (Object.keys(validations).length == 0) {
+      throw new Error(`CustomTextInputGroupController - validations must have 1 or more validation methods`)
+    }
+    return validations
+  }
+
+  /**
+   * Get the validation callback for the given input name
+   * 
+   * @param {String} inputName 
+   * @return {Function|null}
+   */
+  _getValidationsCallback (inputName) {
+    return this._validations[inputName] ?? null
   }
 
   /**
@@ -118,6 +146,13 @@ class CustomTextInputGroupController {
       )
     }
     state.setValidator(this._validator)
+
+    /** set the validation callback in the CustomInputState */
+    let validations = this._getValidationsCallback(name)
+    if (validations) {
+      state.setValidateCallback(validations)
+    }
+
     this._states[name] = state
     this._data[name] = ""
   }
