@@ -10,7 +10,7 @@ import CustomInputState from "./CustomInputState"
 import DefaulValidator from "validator"
 
 class CustomTextInputGroupController {
-  constructor(validations) {
+  constructor(validations=null) {
     this._currentFocusedInputIndex = 0
     this._currentFocusedInputState
     this._inputRefs = []
@@ -33,6 +33,9 @@ class CustomTextInputGroupController {
    * @throws {Error}
    */
   _initValidations(validations) {
+    if (!validations) {
+      return
+    }
     if (!typeof  validations === "object") {
       throw new Error(`CustomTextInputGroupController - validations must be an object containing validation methods but ${validations} passed`)      
     }
