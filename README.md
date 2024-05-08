@@ -5,11 +5,19 @@
 [![npm](https://img.shields.io/npm/v/vue-custom-text-input.svg)](https://www.npmjs.com/package/vue-custom-text-input)
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.x-brightgreen.svg)](https://vuejs.org/)
 
-## 📦 Vue-Custom-Text-Input v1.2.0 Released!
+## 📦 Vue-Custom-Text-Input v1.2.1 Released!
 
 **New features and improvements:**
 
-- **Multiple validations:** The input field now supports multiple validations! 🎉 This means you can specify multiple validation rules for a single input field, and the input field will be considered invalid if any of the rules are not met.
+- **Multiple validations per input:** The input field now supports multiple validations! 🎉 This means you can specify multiple validation rules for a single input field, and the input field will be considered invalid if any of the rules are not met.
+
+- **Directly Pass Validation Callbacks for Multiple Input Components to CustomTextInputGroupController:** The ```CustomTextInputGroupController``` now allows all validation callback functions for multiple input components to be passed directly into constructor.
+  ````
+  let controller = new CustomTextInputGroupController({
+    inputName1 : validationCallback ({validator, data, errorCallback, successCallback}) => {}
+    inputName2 : validationCallback ({validator, data, errorCallback, successCallback}) => {}        
+  })
+  ````
 
 - **Focus on enter key:** The input field now supports focus on enter key. This means that when the enter key is pressed while another input field is focused, the next input field will automatically receive focus.
 
@@ -34,7 +42,7 @@
   - [Props](#props)
   - [Events](#events)
   - [Data Validation](#data-validation)
-  - [CustomInputGroupController](#custominputgroupcontroller)
+  - [CustomTextInputGroupController](#CustomTextInputGroupController)
     - [Features](#features)
     - [Usage](#usage)
     - [Constructor](#constructor)
@@ -87,7 +95,7 @@ This example shows how to use the Custom Input Component in a Vue component. The
 </template>
 
 <script>
-import {CustomInput, CustomInputGroupController, CustomInputStyles, Utils} from 'vue-custom-text-input'
+import {CustomInput, CustomTextInputGroupController, CustomInputStyles, Utils} from 'vue-custom-text-input'
 
 export default {
   components: {
@@ -95,7 +103,21 @@ export default {
   },
   data() {
     return {
-      inputController: new CustomInputGroupController(),
+      inputController: new CustomTextInputGroupController(),
+
+      /**
+       * =========================================
+       * now allows all validation callback functions for multiple input components to be passed
+       * directly into constructor.
+       * 
+       * inputController: new CustomTextInputGroupController({
+       *   inputName1 : validationCallback ({validator, data, error, success}) => {}
+       *   inputName2 : validationCallback ({validator, data, error, success}) => {}
+       * }),
+       * ==========================================
+       */
+
+
       styles : { 
         input: { 
           primary: ["border-secondary"],
@@ -134,7 +156,7 @@ export default {
 | Prop                                 | Type                       | Required | Default           | Description                                                                                                           |
 | ------------------------------------ | -------------------------- | -------- | ----------------- | --------------------------------------------------------------------------------------------------------------------- |
 | name                                 | String                     | true     |                   | The name of the input field.                                                                                          |
-| controller                           | CustomInputGroupController | true     |                   | The controller object that manages the state of the input component.                                                  |
+| controller                           | CustomTextInputGroupController | true     |                   | The controller object that manages the state of the input component.                                                  |
 | inputType                            | String                     | false    | "text"            | The type of input field (e.g., "text", "password", "email", etc.).                                                    |
 | realTimeValidate                     | Boolean                    | false    | true              | Flag indicating whether to perform real-time validation on the input field.                                           |
 | [validateCallback](#data-validation) | Function                   | false    |                   | A callback function that must return a **closure**                                                                    |
@@ -194,7 +216,7 @@ username () {
 | `error`     | A callback function provided by the `CustomInputState` class that allows you to set an error message for the input if it fails validation. You can call this function and pass the error message as a parameter to indicate that the input is invalid.                                                                                                     |
 | `success`   | A callback function provided by the `CustomInputState` class that allows you to set a success message for the input if it passes validation. You can call this function and pass the success message as a parameter to indicate that the input is valid.                                                                                                   |
 
-## CustomInputGroupController
+## CustomTextInputGroupController
 
 The Custom Input Group Controller is a class that provides the ability to track the state of multiple input elements and validate them as a group. It is designed to simplify the management of input states and provide a convenient way to validate inputs collectively.
 
@@ -208,7 +230,7 @@ The Custom Input Group Controller is a class that provides the ability to track 
 
 ## Usage
 
-1. Initializing the Controller: Create an instance of CustomInputGroupController.
+1. Initializing the Controller: Simply instantiate a CustomTextInputGroupController. Rather than passing individual input validations to each component as a prop, you can now directly provide them to the constructor for multiple components.
 
 2. Defining Input States: Use the setState method to define input states within the controller. Each state should have a unique name and a CustomInputState instance for handling validation rules, errors, and input tracking.
 
@@ -219,10 +241,10 @@ The Custom Input Group Controller is a class that provides the ability to track 
 ### Constructor
 
 ```javascript
-constructor()
+constructor(validations=null)
 ```
 
-The constructor initializes a new instance of the `CustomInputGroupController` class.
+The constructor initializes a new instance of the `CustomTextInputGroupController` class.
 
 ### Methods
 

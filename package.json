@@ -1,6 +1,6 @@
 {
   "name": "vue-custom-text-input",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "This is a versatile and powerful Vue component that provides a customizable text input field with built-in input validation and seamless management of visual states.",
   "main": "src/index.js",
   "directories": {
