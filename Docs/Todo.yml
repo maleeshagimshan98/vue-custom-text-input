@@ -1,0 +1,4 @@
+- Update the readme about following changes
+    - leading and trailing slots
+    - slot props exposed with the slots - controller, state and styles
+    - wmitting of the event "input-group-complete" when the all of the inputs in the group is completed focusing (thus signalling a safe assumption to the parent that it can move on focusing to other groups of inputs)
