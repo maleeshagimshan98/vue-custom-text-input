@@ -288,7 +288,7 @@ class CustomTextInputGroupController {
   /**
    * focus the next input element
    *
-   * @returns {void}
+   * @returns {boolean}
    */
   focusNext() {
     if (this._inputRefs.length > this._currentFocusedInputIndex + 1) {
@@ -296,9 +296,11 @@ class CustomTextInputGroupController {
       this._inputRefs[this._currentFocusedInputIndex].component.focus()
       let nextStateName = this._inputRefs[this._currentFocusedInputIndex].name
       this._updateCurrentInputState(nextStateName)
-      return
+      return true
     }
-    throw new Error(``)
+    else {
+      return false
+    }
   }
 
   /**

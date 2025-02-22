@@ -169,8 +169,12 @@ export default {
       this.$emit("focusout", event)
     },
     enter(event) {
-      this.controller.focusNext()
-      this.$emit("enter", event.target.value)
+      if (this.controller.focusNext()) {
+        this.$emit("enter", event.target.value)
+      }
+      else {
+        this.$emit("input-group-complete")
+      }
     },
     onInput: function (event) {
       //this.isTyping = true;
