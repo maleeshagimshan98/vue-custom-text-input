@@ -22,18 +22,33 @@
         :styles="styles">
       </slot>
       <!-- default content -->
-      <input
-        :type="_state.inputType"
-        :placeholder="_state.placeholder"
-        :disabled="_state.isDisabled()"
-        class="custom-input-el"
-        v-bind:class="[styles.input.base, computeStyleObj(styles.input)]"
-        v-bind:value="controller.getValue(name)"
-        v-on:input="(event) => onInput(event)"
-        v-on:focus.stop="(event) => focus(event)"
-        v-on:focusout.stop="(event) => focusOut(event)"
-        v-on:keyup.enter.stop="(event) => enter(event)"
-        :ref="'input'" />
+      <div class="input-row">
+        <!-- slot for leading item before the input element -->
+        <slot name="leading"
+        :state="_state"
+        :controller="controller"
+        :styles="styles">
+        </slot>
+        <!-- input element -->
+        <input
+          :type="_state.inputType"
+          :placeholder="_state.placeholder"
+          :disabled="_state.isDisabled()"
+          class="custom-input-el"
+          v-bind:class="[styles.input.base, computeStyleObj(styles.input)]"
+          v-bind:value="controller.getValue(name)"
+          v-on:input="(event) => onInput(event)"
+          v-on:focus.stop="(event) => focus(event)"
+          v-on:focusout.stop="(event) => focusOut(event)"
+          v-on:keyup.enter.stop="(event) => enter(event)"
+          :ref="'input'" />
+        <!-- slot for trailing item after the input element -->
+        <slot name="trailing"
+        :state="_state"
+        :controller="controller"
+        :styles="styles">
+        </slot>
+      </div>
     </div>
     <slot name="message" :state="_state" :controller="controller" :styles="styles">
       <!-- default content -->
@@ -211,5 +226,11 @@ export default {
 
 .custom-input-wrapper {
   position: relative;
+}
+
+.input-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 </style>

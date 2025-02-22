@@ -15,6 +15,18 @@
           From inputEnhancement slot
         </h4>
       </template>
+
+      <template #leading="{ state, styles, controller }">
+        <h4 class="" v-bind:class="state.isValid() ? 'valid' : 'not-valid'" style="margin-right: 10px;">
+          From leading slot
+        </h4>
+      </template>
+
+      <template #trailing="{ state, styles, controller }">
+        <h4 class="" v-bind:class="state.isValid() ? 'valid' : 'not-valid'" style="margin-left: 10px;">
+          From trailing slot
+        </h4>
+      </template>
     </comp>
 
     <comp name="testInput2" style="margin-top: 50px" :styles="styles" :label="'input 2'"
@@ -142,8 +154,8 @@ export default {
 
 /* Focus styles for the input element */
 .cust-input:focus {
-  border-color: #070707;
-  box-shadow: 0 0 0 3px rgba(7, 7, 7, 0.5);
+  /* border-color: #070707; */
+  /* box-shadow: 0 0 0 3px rgba(7, 7, 7, 0.5); */
 }
 
 /* Primary styles for the input component */
