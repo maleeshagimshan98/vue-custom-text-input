@@ -7,7 +7,7 @@
  */
 
 import CustomInputState from "./CustomInputState"
-import DefaulValidator from "validator"
+import DefaultValidator from "validator"
 
 class CustomTextInputGroupController {
   constructor(validations=null) {
@@ -22,7 +22,7 @@ class CustomTextInputGroupController {
      * ATTENTION
      * INITIALIZE A VALIDATOR - ATLEAST A DEFAULT VALIDATOR
      */
-    this._validator = DefaulValidator
+    this._validator = DefaultValidator
   }
 
   /**
@@ -51,7 +51,7 @@ class CustomTextInputGroupController {
    * @param {String} inputName 
    * @return {Function|null}
    */
-  _getValidationsCallback (inputName) {
+  _getValidationCallback (inputName) {
     return this._validations[inputName] ?? null
   }
 
@@ -74,7 +74,7 @@ class CustomTextInputGroupController {
    * @throws {Error}
    */
   _throwErrorIfParamIsNotSet(methodName, parameter) {
-    if (!parameter) {
+    if (parameter === undefined || parameter === null) {
       throw new Error(
         `CustomTextInputGroupController - ${methodName}() method requires a value for the ${parameter} parameter.`
       )
@@ -151,7 +151,7 @@ class CustomTextInputGroupController {
     state.setValidator(this._validator)
 
     /** set the validation callback in the CustomInputState */
-    let validations = this._getValidationsCallback(name)
+    let validations = this._getValidationCallback(name)
     if (validations) {
       state.setValidateCallback(validations)
     }
