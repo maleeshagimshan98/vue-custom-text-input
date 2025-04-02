@@ -1,54 +1,58 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import prettier from "eslint-config-prettier";
-import prettierPlugin from "eslint-plugin-prettier";
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import prettier from 'eslint-config-prettier';
+import prettierPlugin from 'eslint-plugin-prettier';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    // Specify which files to lint
-    files: ["**/*.{js,mjs,cjs,ts,tsx}"], // Include JS, MJS, CJS, TS, and TSX files
-    ignores: ["node_modules", "dist", "build"], // Ignore common output directories
+    files: ['src/**/*.{js,ts}'],
+    ignores: ['node_modules', 'dist', 'build'],
     languageOptions: {
-      globals: globals.browser, // Enable browser global variables
-      parser: tseslint.parser, // Use TypeScript parser
+      globals: globals.node, // Enable Node.js global variables
+      parser: tseslint.parser,
       parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        project: "./tsconfig.json", // Ensure ESLint understands TypeScript project structure
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        project: './tsconfig.json',
       },
     },
     plugins: {
-      "@typescript-eslint": tseslint.plugin, // TypeScript plugin
-      prettier: prettierPlugin, // Prettier plugin for linting formatting issues
+      '@typescript-eslint': tseslint.plugin,
+      prettier: prettierPlugin,
     },
     rules: {
-      // ESLint core rules
-      "no-console": "warn", // Warn on console.log usage
-      "no-debugger": "error", // Disallow debugger statements
-      "eol-last": ["error", "always"], // Ensure LF at the end of files
-      "linebreak-style": ["error", "unix"], // Enforce LF (Unix-style EOL)
+      /** ✅ TypeScript Rules */
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/consistent-type-imports': 'error',
 
-      // TypeScript rules
-      "@typescript-eslint/no-unused-vars": ["error"], // Prevent unused variables
-      "@typescript-eslint/explicit-function-return-type": "warn", // Warn if functions lack return types
-
-      // Prettier rules
-      "prettier/prettier": [
-        "error",
+      /** ✅ Prettier Rules */
+      'prettier/prettier': [
+        'error',
         {
-          endOfLine: "lf", // Ensure LF (Line Feed) is used
+          endOfLine: 'lf', // Ensure LF (Line Feed) is used
           semi: true, // Require semicolons
           singleQuote: true, // Use single quotes
-          trailingComma: "all", // Use trailing commas
-          printWidth: 80, // Wrap lines at 80 characters
+          trailingComma: 'all', // Use trailing commas
+          printWidth: 120, // Wrap lines at 80 characters
           tabWidth: 2, // Indent with 2 spaces
         },
       ],
+
+      /** ✅ Node.js & General JS Rules */
+      'eol-last': ['error', 'always'], // Ensure LF at the end of files
+      'linebreak-style': ['error', 'unix'], // Enforce LF (Unix-style EOL)
+      'no-console': 'warn', // Warn on console.log usage
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   },
-  pluginJs.configs.recommended, // Recommended ESLint rules
-  ...tseslint.configs.recommended, // Recommended TypeScript rules
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
   prettier, // Disable conflicting ESLint rules that Prettier handles
 ];
