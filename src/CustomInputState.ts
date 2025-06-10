@@ -2,7 +2,7 @@
  * Copyright - 2025 - Maleesha Gimshan (www.github.com/maleeshagimshan98)
  */
 
-type NewCustomInputState = {
+export type NewCustomInputState = {
   name: string;
   inputType?: string;
   label?: string;
@@ -16,7 +16,7 @@ type NewCustomInputState = {
   isValid?: boolean;
 };
 
-type ValidateParameters = {
+export type ValidateParameters = {
   data: string | number;
   validatorLib: unknown;
   error: (message: string) => void;
@@ -24,14 +24,14 @@ type ValidateParameters = {
   reset: () => void;
 };
 
-type ValidateCallback = (params: ValidateParameters) => void;
+export type ValidateCallback = (params: ValidateParameters) => void;
 
-type ValidationMessage = { isError: boolean; message: string };
+export type ValidationMessage = { isError: boolean; message: string };
 
 /**
  * State class for custom input element
  */
-class CustomInputState {
+export class CustomInputState {
   /**
    * The name of the input
    *
@@ -436,5 +436,3 @@ class CustomInputState {
     return this._isFocused;
   }
 }
-
-export { CustomInputState, NewCustomInputState, ValidateParameters, ValidateCallback, ValidationMessage };
