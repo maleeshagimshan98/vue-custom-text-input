@@ -9,6 +9,9 @@
     "allowJs": false /* Don't allow JavaScript files in the project */,
     "resolveJsonModule": true /* Allow importing JSON files */,
     "declaration": true /* Generate type definitions */,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
 
     /* 💡 Strict Type Checking */
     "strict": true /* Enable all strict type checking */,
