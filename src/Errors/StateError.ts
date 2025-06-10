@@ -1,6 +1,7 @@
 enum StateErrorType {
   'STATE_NOT_SET',
   'STATE_ALREADY_EXIST',
+  'VALIDATOR_NOT_DEFINED',
 }
 
 const errorMessage = {
@@ -9,6 +10,9 @@ const errorMessage = {
   },
   [StateErrorType.STATE_ALREADY_EXIST]: (name: string): string => {
     return `CustomTextInputGroupController - An input component with name ${name} is already exists.`;
+  },
+  [StateErrorType.VALIDATOR_NOT_DEFINED]: (name: string): string => {
+    return `Validation failed in '${name}': A validator is not defined. Please provide a validator during initialization.`;
   },
 };
 
