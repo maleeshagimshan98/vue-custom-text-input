@@ -16,7 +16,7 @@ const errorMessage = {
   },
 };
 
-class StateError extends Error {
+class InputStateError extends Error {
   type: StateErrorType;
   constructor(type: StateErrorType, inputName: string) {
     super(errorMessage[type](inputName));
@@ -24,4 +24,4 @@ class StateError extends Error {
   }
 }
 
-export { StateError, StateErrorType };
+export { InputStateError, StateErrorType };

@@ -3,7 +3,7 @@
  */
 import type { ValidateCallback } from './CustomInputState';
 import { CustomInputState } from './CustomInputState';
-import { StateError, StateErrorType } from './errors/StateError';
+import { InputStateError, StateErrorType } from './errors/InputStateError';
 import DefaultValidator from 'validator';
 import type validator from 'validator';
 
@@ -119,11 +119,11 @@ export class CustomTextInputGroupController {
    *
    * @param {string} name input name
    * @returns {CustomInputState}
-   * @throws {StateError}
+   * @throws {InputStateError}
    */
   getState(name: string): CustomInputState {
     if (!this._hasState(name)) {
-      throw new StateError(StateErrorType.STATE_NOT_SET, name);
+      throw new InputStateError(StateErrorType.STATE_NOT_SET, name);
     }
     return this._states[name]!;
   }
@@ -134,11 +134,16 @@ export class CustomTextInputGroupController {
    * @param {string} name input name
    * @param {CustomInputState} state input state
    * @returns {void}
-   * @throws {StateError}
+   * @throws {InputStateError}
    */
   setState(name: string, state: CustomInputState): void {
+    if (!name || name == '') {
+      throw new TypeError(
+        `CustomTextInputGroupController - setState() expects the name parameter to be a non-empty string`,
+      );
+    }
     if (this._states[name]) {
-      throw new StateError(StateErrorType.STATE_ALREADY_EXIST, name);
+      throw new InputStateError(StateErrorType.STATE_ALREADY_EXIST, name);
     }
     state.setValidator(this._validator);
 
@@ -158,11 +163,11 @@ export class CustomTextInputGroupController {
    * @param {string} name input name
    * @param {string | number} data input data
    * @returns {void}
-   * @throws {StateError}
+   * @throws {InputStateError}
    */
   setData(name: string, data: string | number): void {
     if (!this._hasState(name)) {
-      throw new StateError(StateErrorType.STATE_NOT_SET, name);
+      throw new InputStateError(StateErrorType.STATE_NOT_SET, name);
     }
     this._data[name] = data;
   }
@@ -185,7 +190,9 @@ export class CustomTextInputGroupController {
    */
   getValue(name: string): string | number {
     if (!name) {
-      throw new TypeError(`CustomTextInputGroupController - getValue() expects the parameter to have a value`);
+      throw new TypeError(
+        `CustomTextInputGroupController - getValue() expects the name parameter to be a non-empty string`,
+      );
     }
     if (!Object.prototype.hasOwnProperty.call(this._data, name)) {
       throw new TypeError(`CustomTextInputGroupController - an input with the name of ${name} is not found`);
@@ -334,11 +341,11 @@ export class CustomTextInputGroupController {
    * @param {string} name name of the property
    * @param {string} message  error message
    * @returns {void}
-   * @throws {StateError}
+   * @throws {InputStateError}
    */
   setStateError(name: string, message: string): void {
     if (!this._hasState(name)) {
-      throw new StateError(StateErrorType.STATE_NOT_SET, name);
+      throw new InputStateError(StateErrorType.STATE_NOT_SET, name);
     }
     this._states[name]?.error(message);
   }
@@ -349,11 +356,11 @@ export class CustomTextInputGroupController {
    * @param {string} name name of the property
    * @param {string} message  error message
    * @returns {void}
-   * @throws {StateError}
+   * @throws {InputStateError}
    */
   setStateSuccess(name: string, message: string): void {
     if (!this._hasState(name)) {
-      throw new StateError(StateErrorType.STATE_NOT_SET, name);
+      throw new InputStateError(StateErrorType.STATE_NOT_SET, name);
     }
     this._states[name]?.success(message);
   }
@@ -366,7 +373,7 @@ export class CustomTextInputGroupController {
    */
   resetState(name: string): void {
     if (!this._hasState(name)) {
-      throw new StateError(StateErrorType.STATE_NOT_SET, name);
+      throw new InputStateError(StateErrorType.STATE_NOT_SET, name);
     }
     this._states[name]?.reset();
   }
