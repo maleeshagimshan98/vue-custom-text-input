@@ -205,6 +205,7 @@ export class CustomTextInputGroupController {
         return ref.component;
       }
     }
+    return;
   }
 
   /**
