@@ -1,34 +1,64 @@
 /**
- * Copyright - 2021 - Maleesha Gimshan (www.github.com/maleeshagimshan98)
+ * Copyright - 2025 - Maleesha Gimshan (www.github.com/maleeshagimshan98)
  */
-
-/**
- * custom input states controller
- */
-
-import type { ValidateParameters, ValidateCallback } from './CustomInputState';
+import type { ValidateCallback } from './CustomInputState';
 import { CustomInputState } from './CustomInputState';
-import { StateError, StateErrorType } from './Errors/StateError';
+import { StateError, StateErrorType } from './errors/StateError';
 import DefaultValidator from 'validator';
 import type validator from 'validator';
 
-type GroupValidationContainer = Record<string, (param: ValidateParameters) => void>;
-type States = { [key: string]: CustomInputState };
-type InputRef = { name: string; component: unknown };
+export type GroupValidationContainer = Record<string, ValidateCallback>;
+export type States = { [key: string]: CustomInputState };
+export type InputRef = { name: string; component: HTMLElement };
 
-class CustomTextInputGroupController {
+export class CustomTextInputGroupController {
+  /**
+   * The index of the currently focused input element
+   *
+   * @type {number}
+   */
   private _currentFocusedInputIndex: number = 0;
 
+  /**
+   * The state of the currently focused input, if available
+   *
+   * @type {CustomInputState | undefined}
+   */
   private _currentFocusedInputState: CustomInputState | undefined;
 
+  /**
+   * Array of input element references
+   *
+   * @type {InputRef[]}
+   */
   private _inputRefs: InputRef[] = [];
 
+  /**
+   * Key-value record storing input data (string or number values)
+   *
+   * @type {Record<string, string | number>}
+   */
   private _data: Record<string, string | number>;
 
-  private _validations: Record<string, ValidateCallback> | undefined; //... check
+  /**
+   * Key-value record storing validation callbacks for each input (if any)
+   *
+   * @type {Record<string, ValidateCallback> | undefined}
+   */
+  private _validations: Record<string, ValidateCallback> | undefined;
 
+  /**
+   * Object representing the states of form or inputs
+   *
+   * @type {States}
+   */
   private _states: States;
 
+  /**
+   * Validator utility for validating input fields
+   *
+   * @type {typeof validator}
+   */
   private _validator: typeof validator;
 
   constructor(validations?: GroupValidationContainer) {
@@ -52,7 +82,7 @@ class CustomTextInputGroupController {
    * @return {Record<string, ValidateCallback>}
    * @throws {Error}
    */
-  _initValidations(validations: GroupValidationContainer): Record<string, ValidateCallback> {
+  private _initValidations(validations: GroupValidationContainer): GroupValidationContainer {
     if (!(typeof validations === 'object')) {
       throw new Error(
         `CustomTextInputGroupController - validations must be an object containing validation methods but ${validations} passed`,
@@ -70,7 +100,7 @@ class CustomTextInputGroupController {
    * @param {string} inputName
    * @return {ValidateCallback|null}
    */
-  _getValidationCallback(inputName: string): ValidateCallback | undefined {
+  private _getValidationCallback(inputName: string): ValidateCallback | undefined {
     return this._validations ? this._validations[inputName] : undefined;
   }
 
@@ -80,7 +110,7 @@ class CustomTextInputGroupController {
    * @param {string} name input name
    * @returns {boolean}
    */
-  _hasState(name: string): boolean {
+  private _hasState(name: string): boolean {
     return Object.prototype.hasOwnProperty.call(this._states, name) && this._states[name] instanceof CustomInputState;
   }
 
@@ -169,7 +199,7 @@ class CustomTextInputGroupController {
    * @param {string} name
    * @returns {unknown | void}
    */
-  _getInputRefInstance(name: string): unknown | void {
+  private _getInputRefInstance(name: string): unknown | void {
     for (const ref of this._inputRefs) {
       if (name == ref.name) {
         return ref.component;
@@ -200,7 +230,7 @@ class CustomTextInputGroupController {
    * @param {*} component
    * @returns {void}
    */
-  setInputRef(name: string, component: unknown): void {
+  setInputRef(name: string, component: HTMLElement): void {
     if (this._getInputRefInstance(name)) {
       //... CHECK
       //... input ref is already set
@@ -216,7 +246,7 @@ class CustomTextInputGroupController {
    * @param {boolean} focusVal
    * @returns {void}
    */
-  _setFocusInCustomInputState(state: CustomInputState, focusVal: boolean): void {
+  private _setFocusInCustomInputState(state: CustomInputState, focusVal: boolean): void {
     state.setFocused(focusVal);
   }
 
@@ -226,7 +256,7 @@ class CustomTextInputGroupController {
    * @param {string} name input name
    * @returns {void}
    */
-  _updateCurrentInputState(name: string): void {
+  private _updateCurrentInputState(name: string): void {
     //... check if the component name is set before returning the component - move the checking to public calling function
     if (this._currentFocusedInputState) {
       this._setFocusInCustomInputState(this._currentFocusedInputState, false);
@@ -242,7 +272,7 @@ class CustomTextInputGroupController {
    * @param {number} index
    * @returns {void}
    */
-  _updateCurrentInputRefIndex(index: number): void {
+  private _updateCurrentInputRefIndex(index: number): void {
     this._currentFocusedInputIndex = index;
   }
 
@@ -255,8 +285,10 @@ class CustomTextInputGroupController {
     if (this._inputRefs.length > this._currentFocusedInputIndex + 1) {
       this._updateCurrentInputRefIndex(this._currentFocusedInputIndex + 1);
       this._inputRefs[this._currentFocusedInputIndex]?.component.focus();
-      const nextStateName = this._inputRefs[this._currentFocusedInputIndex]?.name;
-      this._updateCurrentInputState(nextStateName);
+      const currentStateName = this._inputRefs[this._currentFocusedInputIndex]?.name;
+      if (currentStateName) {
+        this._updateCurrentInputState(currentStateName);
+      }
       return true;
     } else {
       return false;
@@ -403,5 +435,3 @@ class CustomTextInputGroupController {
     return valid && _hasErrors;
   }
 }
-
-export default CustomTextInputGroupController;
