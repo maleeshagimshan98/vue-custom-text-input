@@ -5,9 +5,7 @@
     <!-- label-->
     <slot name="label" :state="_state" :controller="controller" :styles="styles">
       <!-- default content -->
-      <p
-        v-bind:class="[styles.label.base, computeStyleObj(styles.label)]"
-        v-if="_state.label">
+      <p v-bind:class="[styles.label.base, computeStyleObj(styles.label)]" v-if="_state.label">
         {{ _state.label }}
       </p>
     </slot>
@@ -15,46 +13,27 @@
     <!-- position relative -->
     <div class="custom-input-wrapper">
       <!-- position - absolute-->
-      <slot
-        name="inputEnhancements"
-        :state="_state"
-        :controller="controller"
-        :styles="styles">
+      <slot name="inputEnhancements" :state="_state" :controller="controller" :styles="styles">
       </slot>
       <!-- default content -->
       <div class="input-row">
         <!-- slot for leading item before the input element -->
-        <slot name="leading"
-        :state="_state"
-        :controller="controller"
-        :styles="styles">
+        <slot name="leading" :state="_state" :controller="controller" :styles="styles">
         </slot>
         <!-- input element -->
-        <input
-          :type="_state.inputType"
-          :placeholder="_state.placeholder"
-          :disabled="_state.isDisabled()"
-          class="custom-input-el"
-          v-bind:class="[styles.input.base, computeStyleObj(styles.input)]"
-          v-bind:value="controller.getValue(name)"
-          v-on:input="(event) => onInput(event)"
-          v-on:focus.stop="(event) => focus(event)"
-          v-on:focusout.stop="(event) => focusOut(event)"
-          v-on:keyup.enter.stop="(event) => enter(event)"
-          :ref="'input'" />
+        <input :type="_state.inputType" :placeholder="_state.placeholder" :disabled="_state.isDisabled()"
+          class="custom-input-el" v-bind:class="[styles.input.base, computeStyleObj(styles.input)]"
+          v-bind:value="controller.getValue(name)" v-on:input="(event) => onInput(event)"
+          v-on:focus.stop="(event) => focus(event)" v-on:focusout.stop="(event) => focusOut(event)"
+          v-on:keyup.enter.stop="(event) => enter(event)" :ref="'input'" />
         <!-- slot for trailing item after the input element -->
-        <slot name="trailing"
-        :state="_state"
-        :controller="controller"
-        :styles="styles">
+        <slot name="trailing" :state="_state" :controller="controller" :styles="styles">
         </slot>
       </div>
     </div>
     <slot name="message" :state="_state" :controller="controller" :styles="styles">
       <!-- default content -->
-      <p
-        v-bind:class="[styles.message.base, computeStyleObj(styles.message)]"
-        v-if="_state.hasMessages()">
+      <p v-bind:class="[styles.message.base, computeStyleObj(styles.message)]" v-if="_state.hasMessages()">
         <!-- Show Only First Error Message Here -->
         {{ _state.messages()[0].message }}
       </p>
@@ -62,16 +41,20 @@
   </div>
 </template>
 
-<script>
-import CustomInputState from "./CustomInputState.js"
-import CustomInputStyles from "./CustomInputStyles.js"
+<script lang="ts">
+import { defineComponent } from "vue"
+import type { PropType } from "vue"
+import { CustomInputState } from "./CustomInputState"
+import type { ValidateCallback } from "./CustomInputState"
+import { CustomInputStyles, InputStyleState } from "./CustomInputStyles"
+import { CustomTextInputGroupController } from "./CustomInputGroupController"
 
-export default {
-  name  : 'vue-custom-text-input',
+export default defineComponent({
+  name: 'vue-custom-text-input',
   data: function () {
     return {
       //isTyping : false,
-      _state: "",
+      _state: null as CustomInputState | null,
     }
   },
   props: {
@@ -80,23 +63,27 @@ export default {
       required: true,
     },
     controller: {
-      type: Object,
+      type: Object as PropType<CustomTextInputGroupController>,
+      required: true,
     },
     inputType: {
       type: String,
+      default: "text",
     },
     realTimeValidate: {
       type: Boolean,
       default: true,
     },
     validateCallback: {
-      type: Function,
+      type: Function as unknown as () => ValidateCallback,
     },
     label: {
       type: String,
+      default: '',
     },
     placeholder: {
       type: String,
+      default: '',
     },
     disabled: {
       type: Boolean,
@@ -123,66 +110,70 @@ export default {
     styles: {
       type: CustomInputStyles,
       default: () => {
-        return new CustomInputStyles(/*{
+        return new CustomInputStyles({
           input: {
-            base: ["test-input-base", "test-input-second-class"],
-            primary: ["test-input-primary"],
-            focused: ["test-input-focused"],
-            error: ["test-input-error"],
-            success: ["test-input-success"],
+            base: [],
+            primary: [],
+            focused: [],
+            error: [],
+            success: [],
           },
           label: {
-            base: ["test-label-base"],
-            primary: ["test-label-primary"],
-            focused: ["test-label-focused"],
-            error: ["test-label-error"],
-            success: ["test-label-success"],
+            base: [],
+            primary: [],
+            focused: [],
+            error: [],
+            success: [],
           },
           message: {
-            base: ["test-message-base"],
-            primary: ["test-message-primary"],
-            focused: ["test-message-focused"],
-            error: ["test-message-error"],
-            success: ["test-message-success"],
+            base: [],
+            primary: [],
+            focused: [],
+            error: [],
+            success: [],
           },
-        }*/)
+        })
       },
     },
   },
   computed: {},
   components: {},
-  methods: {    
-    computeStyleObj(elementStyle) {
-      return {
+  methods: {
+    computeStyleObj(elementStyle: InputStyleState): Record<string, boolean> {
+      return this._state ? {
         [elementStyle.primary.join(" ")]: this._state.isValid() && !this._state.isSuccess(),
         [elementStyle.success.join(" ")]: this._state.isSuccess(),
         [elementStyle.error.join(" ")]: !this._state.isValid(),
-       // [elementStyle.focused.join(" ")]: this._state.isFocused(),
-      }
+        [elementStyle.focused.join(" ")]: this._state.isFocused(),
+      } : {};
     },
-    focus(event) {
+    focus(event: FocusEvent) {
       this.controller.focusByName(this.name)
       this.$emit("focus", event)
     },
-    focusOut(event) {
+    focusOut(event: FocusEvent) {
       this.controller.setCurrentInputStateFocusOut()
       this.$emit("focusout", event)
     },
-    enter(event) {
-      this.controller.focusNext()
-      this.$emit("enter", event.target.value)
+    enter(event: KeyboardEvent) {
+      if (this.controller.focusNext()) {
+        this.$emit("enter", event);
+      }
+      else {
+        this.$emit("input-group-complete")
+      }
     },
-    onInput: function (event) {
+    onInput: function (event: Event) {
       //this.isTyping = true;
       if (this.resetOnInput) {
-        this._state.reset()
+        this._state?.reset()
       }
       if (this.realTimeValidate) {
         //... validate the input
-        this._state.validate(event.target.value)
+        this._state?.validate((event.target as HTMLInputElement)?.value)
       }
-      this.controller.setData(this.name, event.target.value)
-      this.$emit("input", event.target.value)
+      this.controller.setData(this.name, (event.target as HTMLInputElement).value)
+      this.$emit("input", (event.target as HTMLInputElement).value)
     },
   },
   beforeMount: async function () {
@@ -202,10 +193,10 @@ export default {
         label: this.label,
         placeholder: this.placeholder,
         realTimeValidate: this.realTimeValidate,
-        validateCallback: this.validateCallback,
+        // validateCallback: this.validateCallback,
         disabled: this.disabled,
-        initSuccessMsg: this.initSuccessMsg,
-        initErrorMsg: this.initErrorMsg,
+        initSuccessMsg: this.initSuccessMsg ?? '',
+        initErrorMsg: this.initErrorMsg ?? '',
         isReq: this.isReq,
         isValid: this.isValid,
       })
@@ -213,9 +204,9 @@ export default {
     this._state = this.controller.getState(this.name)
   },
   mounted() {
-    this.controller.setInputRef(this.name, this.$refs.input)
+    this.controller.setInputRef(this.name, this.$refs.input as HTMLElement)
   },
-}
+})
 </script>
 
 <style scoped>
