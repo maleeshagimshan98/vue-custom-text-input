@@ -5,9 +5,9 @@
     <!-- label-->
     <slot name="label" :state="_state" :controller="controller" :styles="styles">
       <!-- default content -->
-      <p v-bind:class="[_styleObj.label.base, computeStyleObj(_styleObj.label)]" v-if="_state.label">
+      <label :for="props.name" v-bind:class="[_styleObj.label.base, computeStyleObj(_styleObj.label)]" v-if="_state.label">
         {{ _state.label }}
-      </p>
+      </label>
     </slot>
 
     <!-- position relative -->
@@ -21,7 +21,7 @@
         <slot name="leading" :state="_state" :controller="controller" :styles="styles">
         </slot>
         <!-- input element -->
-        <input :type="_state.inputType" :placeholder="_state.placeholder" :disabled="_state.isDisabled() || false"
+        <input :name="props.name" :type="_state.inputType" :placeholder="_state.placeholder" :disabled="_state.isDisabled() || false"
           class="custom-input-el" v-bind:class="[_styleObj.input.base, computeStyleObj(_styleObj.input)]"
           v-bind:value="controller.getValue(name)" v-on:input="(event) => onInput(event)"
           v-on:focus.stop="(event) => focus(event)" v-on:focusout.stop="(event) => focusOut(event)"
